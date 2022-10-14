@@ -1,20 +1,18 @@
-let selected_table_cell;
+let selectedCell;
+document.querySelectorAll("#selectableCell").forEach(cell => {
+    cell.addEventListener("click", selectCell);
+});
 
-function colorTableCell(element) {
-    element.classList.add("table-active");
-}
-
-function uncolorTableCell(element) {
-    element.classList.remove("table-active");
-}
-
-function selectTableCell(element) {
-    if (selected_table_cell){
-        selected_table_cell.classList.remove("table-success");
-    }
-    if (selected_table_cell === element){
+function selectCell(event) {
+    if (selectedCell === event.target) {
+        selectedCell.classList.remove("table-success");
         return;
     }
-    selected_table_cell = element;
-    selected_table_cell.classList.add("table-success");
+
+    if (selectedCell) {
+        selectedCell.classList.remove("table-success");
+    }
+
+    event.target.classList.add("table-success");
+    selectedCell = event.target;
 }

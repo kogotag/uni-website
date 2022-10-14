@@ -9,43 +9,45 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body>
+        <?php require 'navbar.php'; ?>
         <h1 class="text-center my-4">Регистрация</h1>
         <div class="row">
             <div class="col"></div>
             <div class="col-lg-6">
+                <div class="container px-0 pt-0 pb-3 text-left text-info"><span class="text-danger font-weight-bold">! </span>Система регистрации ещё в процессе разработки. Зайдите сюда позже.</div>
                 <div id="errors" class="container px-0 py-0"></div>
                 <form id="formRegister" class="mx-0" style="width: 100%;">
                     <div class="form-group my-0">
                         <label for="login">Логин</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="text" name="login" id="login" placeholder="login"><br>
+                            <input class="form-control" type="text" name="login" id="login" placeholder="login" disabled><br>
                         </div>
                     </div>
                     <div class="form-group my-0">
                         <label for="email">Электронная почта</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="email" name="email" id="email" placeholder="name@example.com"><br>
+                            <input class="form-control" type="email" name="email" id="email" placeholder="name@example.com" disabled><br>
                         </div>
                     </div>
                     <div class="form-group my-0">
                         <label for="name">Имя</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="text" name="name" id="name" placeholder="Вася Пупкин"><br>
+                            <input class="form-control" type="text" name="name" id="name" placeholder="Вася Пупкин" disabled><br>
                         </div>
                     </div>
                     <div class="form-group my-0">
                         <label for="password">Пароль</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="password" name="password" id="password" placeholder="Пароль"><br>
+                            <input class="form-control" type="password" name="password" id="password" placeholder="Пароль" disabled><br>
                         </div>
                     </div>
                     <div class="form-group my-0">
                         <label for="password_repeat">Повторите пароль</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="password" name="password_repeat" id="password_repeat" placeholder="Пароль"><br>
+                            <input class="form-control" type="password" name="password_repeat" id="password_repeat" placeholder="Пароль" disabled><br>
                         </div>
                     </div>
-                    <div class="btn btn-primary" onclick="register();">Зарегистрировать</div>
+                    <div class="btn btn-primary disabled" disabled>Зарегистрировать</div>
                 </form>
             </div>
             <div class="col"></div>
