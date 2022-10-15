@@ -1,4 +1,4 @@
-function request(url, data, callback) {
+function requestForm(url, data, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
 
@@ -14,7 +14,7 @@ function request(url, data, callback) {
 function register() {
     const errors_div = document.getElementById('errors');
     errors_div.innerHTML = '';
-    request('php/register.php', '#formRegister', function (data) {
+    requestForm('php/register.php', '#formRegister', function (data) {
         if (data) {
             data = JSON.parse(data);
             if (data instanceof Array) {

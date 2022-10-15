@@ -38,23 +38,38 @@
                                     <?php
                                     for ($number = 1; $number <= 6; $number++) {
                                         echo '<tr>';
-                                        $stmt_row = $dbh->prepare("SELECT * FROM `ssau_schedule` WHERE semester=? AND week=? AND number=?;");
+                                        $stmt_row = $dbh->prepare("SELECT * FROM `ssau_schedule` WHERE semester=? AND week=? AND number=? ORDER BY `day`;");
                                         $result_row = $stmt_row->execute(array($semester, $week, $number));
                                         $subjects = [];
                                         if ($result_row) {
                                             $subjects = $stmt_row->fetchAll();
                                         }
-                                        foreach ($subjects as $subject) {
-                                            echo '<td id="selectableCell">';
+                                        for ($day = 1; $day < count($subjects); $day++) {
+                                            $subject = $subjects[$day - 1];
+                                            echo '<td id="selectableCell" class="day', $day, ' number', $number, '">';
                                             echo $subject['subject_name'], '<br>', $subject['subject_lecturer'], '<br>', $subject['subject_classroom'];
                                             echo '</td>';
                                         }
                                         echo '</tr>';
                                     }
+                                    $stmt_day = $dbh->prepare("SELECT (`id`, `user_id`, `content`) FROM `subjects_comments` WHERE semester=? AND week=? AND day=? AND number=? ORDER BY `id`;");
+
+                                    function getDayComments($day, $number) {
+                                        global $semester;
+                                        global $week;
+                                        global $stmt_day;
+                                        $result_day = $stmt_day->execute(array($semester, $week, $day, $number));
+                                        $comments = [];
+                                        if ($result_day) {
+                                            $comments = $stmt_day->fetchAll();
+                                        }
+                                        return $comments;
+                                    }
                                     ?>
                                 </tbody>
                             </table>
                         </div>
+                        <div id="comments"></div>
                         <?php
                     } else {
                         echo 'semester or week not specified';
