@@ -10,6 +10,12 @@
     </head>
     <body>
         <?php require 'navbar.php'; ?>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/index.php">Главная</a></li>
+                <li class="breadcrumb-item active">Вход</li>
+            </ol>
+        </nav>
         <h1 class="text-center my-4">Вход</h1>
         <div class="row">
             <div class="col"></div>

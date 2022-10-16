@@ -10,8 +10,10 @@
     </head>
     <body>
         <?php require 'navbar.php'; ?>
-        <span class="text-left text-info lead">Пока ещё ничего не готово, но скоро будет :)</span>
-        
+        <div class="my-3 mx-2">
+            <span>В расписании уже можно получить информацию по некоторым предметам</span>
+        </div>
+
         <script src="js/jquery-3.6.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
     </body>
