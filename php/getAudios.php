@@ -48,21 +48,21 @@ if (count($errors) !== 0) {
 
 try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
-    $stmt_day = $dbh->prepare("SELECT * FROM `subjects_comments` WHERE semester=? AND week=? AND day=? AND number=? ORDER BY `id`;");
+    $stmt_day = $dbh->prepare("SELECT * FROM `subjects_audios` WHERE semester=? AND week=? AND day=? AND number=? ORDER BY `id`;");
     $result_day = $stmt_day->execute(array($semester, $week, $day, $number));
-    $comments = [];
+    $audios = [];
     if ($result_day) {
-        $comments = $stmt_day->fetchAll();
+        $audios = $stmt_day->fetchAll();
     }
 
-    foreach ($comments as $comment) {
+    foreach ($audios as $audio) {
         $stmt_user = $dbh->prepare("SELECT * FROM `users` WHERE id=?");
-        $result_user = $stmt_user->execute(array($comment["user_id"]));
+        $result_user = $stmt_user->execute(array($audio["user_id"]));
         $user_name = "Not Found";
         if ($result_user) {
             $user_name = $stmt_user->fetch()["name"];
         }
-        echo '<span class="font-weight-bold">', $user_name, '</span><br><span>', $comment["content"], '</span><br>';
+        echo '<span class="font-weight-bold">', $user_name, '</span> добавил аудио:<br><audio controls><source src="', $audio["url"], '" type="audio/mpeg">Your browser does not support audio players</audio><br>';
     }
 } catch (Exception $ex) {
     print($ex->getMessage());

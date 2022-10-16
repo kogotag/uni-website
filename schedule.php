@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="pragma" content="no-cache" />
         <title>1105 Сайт</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -52,23 +53,13 @@
                                         }
                                         echo '</tr>';
                                     }
-                                    $stmt_day = $dbh->prepare("SELECT (`id`, `user_id`, `content`) FROM `subjects_comments` WHERE semester=? AND week=? AND day=? AND number=? ORDER BY `id`;");
-
-                                    function getDayComments($day, $number) {
-                                        global $semester;
-                                        global $week;
-                                        global $stmt_day;
-                                        $result_day = $stmt_day->execute(array($semester, $week, $day, $number));
-                                        $comments = [];
-                                        if ($result_day) {
-                                            $comments = $stmt_day->fetchAll();
-                                        }
-                                        return $comments;
-                                    }
                                     ?>
                                 </tbody>
                             </table>
                         </div>
+                        <h1>Медиа</h1>
+                        <div id="media"></div>
+                        <h1>Комментарии</h1>
                         <div id="comments"></div>
                         <?php
                     } else {
@@ -86,7 +77,6 @@
         }
         ?>
 
-        <span class="text-left text-info lead">Пока ещё не готово, но скоро будет :)</span>
         <script src="js/mainscript.js"></script>
         <script src="js/schedule_table.js"></script>
         <script src="js/jquery-3.6.1.min.js"></script>
