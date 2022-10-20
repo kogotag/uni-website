@@ -70,7 +70,7 @@
                                         ?></th>
                                     <th>Суббота<br><?php
                                         echo $date_weekday_iterator->format("d.m.Y");
-                                        $date_weekday_iterator->modify("+1 days");
+                                        $date_weekday_iterator->modify("+1 days"); //TODO: переделать через цикл по датам
                                         ?></th>
                                 </tr>
                             </thead>
@@ -96,13 +96,14 @@
                             </tbody>
                         </table>
                     </div>
-                    <span class="text-muted">Выберите предмет, чтобы получить информацию</span>
-                    <h2>Описание</h2>
-                    <div id="description"></div>
-                    <h2>Медиа</h2>
-                    <div id="media"></div>
-                    <h2>Комментарии</h2>
-                    <div id="comments"></div>
+                    <span class="text-danger">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</span><br>
+                    <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
+                    <h2>Описание</h2><br>
+                    <div id="description"></div><br>
+                    <h2>Медиа</h2><br>
+                    <div id="media"></div><br>
+                    <h2>Комментарии</h2><br>
+                    <div id="comments"></div><br>
                     <?php
                 } else {
                     echo 'semester or week not specified';
