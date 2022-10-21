@@ -1,6 +1,6 @@
-<footer class="text-start bg-light text-muted text-break fixed-bottom">
+<footer class="text-start bg-light text-muted">
     <section>
-        <div class="d-flex justify-content-between mt-2 mx-footer">
+        <div class="d-flex flex-wrap justify-content-between mt-2 mx-footer">
             <div class="mr-2 mb-2 px-0 py-0 footer-block-info">
                 <h6 class="fw-bold mb-2 px-0 py-0">
                     О нас
