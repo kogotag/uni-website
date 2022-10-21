@@ -10,7 +10,6 @@
     </head>
     <body>
         <?php require 'navbar.php'; ?>
-        
         <div class="row mb-2 mt-4">
             <div class="col-1 pr-0">
             </div>
@@ -22,7 +21,6 @@
             <div class="col-1 pl-0">
             </div>
         </div>
-
         <?php require 'footer.php'; ?>
         <script src="js/jquery-3.6.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
