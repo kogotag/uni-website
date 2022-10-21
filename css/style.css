@@ -5,3 +5,25 @@ form {
 .breadcrumb-item + .breadcrumb-item::before {
     content: ">";
 }
+
+.mr-footer,
+.mx-footer {
+    margin-right: 25vw !important;
+}
+
+.ml-footer,
+.mx-footer {
+    margin-left: 25vw !important;
+}
+
+.text-footer {
+    font-size: 0.9em;
+}
+
+.footer-block-info {
+    width: 20vw;
+}
+
+.footer-block-links {
+    width: 10vw;
+}

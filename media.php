@@ -22,6 +22,7 @@
             <a href="https://www.youtube.com/playlist?list=PL4f6-h4zVq29EyYmdNL518uwOgdtZzWuA">Записи лекций по истории</a><br>
         </div>
 
+        <?php require 'footer.php'; ?>
         <script src="js/mainscript.js"></script>
         <script src="js/jquery-3.6.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>

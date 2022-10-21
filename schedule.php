@@ -115,6 +115,7 @@
         }
         ?>
 
+        <?php require 'footer.php'; ?>
         <script src="js/mainscript.js"></script>
         <script src="js/schedule_table.js"></script>
         <script src="js/jquery-3.6.1.min.js"></script>
