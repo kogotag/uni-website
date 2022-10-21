@@ -1,6 +1,6 @@
-<footer class="text-start bg-light text-muted">
+<footer class="text-start text-muted border-top bg-light">
     <section>
-        <div class="d-flex flex-sm-column flex-lg-row justify-content-lg-between justify-content-sm-center align-items-sm-center mt-4 mb-3 mx-footer">
+        <div class="d-flex flex-column flex-lg-row justify-content-lg-between justify-content-center align-items-center mt-4 mb-3 mx-footer">
             <div class="px-0 py-0 footer-block-links">
                 <h6 class="fw-bold mb-2 px-0 py-0">
                     Ссылки

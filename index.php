@@ -8,14 +8,15 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
-    <body>
+    <body class="bg-light">
         <?php require 'navbar.php'; ?>
         <div class="row mb-2 mt-4">
             <div class="col-1 pr-0">
             </div>
             <div class="col-10 px-0">
-                <h5 class="mb-4">Новости</h5>
+                <h4 class="mb-4">Новости</h4>
                 <div id="news">
+                    <?php require 'php/getNews.php'; ?>
                 </div>
             </div>
             <div class="col-1 pl-0">
