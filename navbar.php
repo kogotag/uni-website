@@ -15,6 +15,9 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/schedule.php">Расписание</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/media.php">Медиа</a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">

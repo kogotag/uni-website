@@ -7,10 +7,15 @@
         <title>1105 Сайт</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     </head>
     <body>
         <?php require 'navbar.php'; ?>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/index.php">Главная</a></li>
+                <li class="breadcrumb-item active">Расписание</li>
+            </ol>
+        </nav>
         <?php
         try {
             $date_now = new DateTime();
@@ -19,22 +24,17 @@
             $difference_weeks = floor($date_now->diff($semester_start)->days / 7) + 1;
             $first_september_weekday = $semester_start->format("N");
             $date_first_monday = $semester_start->modify("-" . $first_september_weekday - 1 . " days");
+
             $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
             if (!filter_input_array(INPUT_GET)) {
-                header("Location: ?semester=" . $semester_auto . "&week=" . $difference_weeks); // TODO: current week
+                header("Location: ?semester=" . $semester_auto . "&week=" . $difference_weeks);
             } else {
                 if (filter_input(INPUT_GET, "semester") && filter_input(INPUT_GET, "week")) {
                     $semester = htmlspecialchars(filter_input(INPUT_GET, "semester"));
                     $week = htmlspecialchars(filter_input(INPUT_GET, "week"));
                     $date_current_week_monday = $date_first_monday->modify("+" . $week - 1 . " weeks");
-                    $date_weekday_iterator = $date_current_week_monday;
+                    $date_weekday_iterator = clone $date_current_week_monday;
                     ?>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/index.php">Главная</a></li>
-                            <li class="breadcrumb-item active">Расписание</li>
-                        </ol>
-                    </nav>
                     <div class="row">
                         <div class="col-12 align-content-between">
                             <div class="d-flex mx-2 justify-content-between">
