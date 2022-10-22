@@ -1,8 +1,9 @@
-<?php require_once 'php/config.inc.php'; ?>
+<?php require_once 'php/utils.php'; ?>
 <html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="<?php echo createToken(); ?>">
         <meta http-equiv="pragma" content="no-cache" />
         <title>1105 Сайт</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
@@ -21,9 +22,9 @@
             $date_now = new DateTime();
             $semester_auto = intval($date_now->format("Y")) - 2021;
             $semester_start = DateTime::createFromFormat("d.m.Y", "01.09." . ($semester_auto + 2021));
-            $difference_weeks = floor($date_now->diff($semester_start)->days / 7) + 1;
             $first_september_weekday = $semester_start->format("N");
             $date_first_monday = $semester_start->modify("-" . $first_september_weekday - 1 . " days");
+            $difference_weeks = floor($date_now->diff($date_first_monday)->days / 7) + 1;
 
             $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
             if (!filter_input_array(INPUT_GET)) {
@@ -104,6 +105,11 @@
                     <div id="media"></div><br>
                     <h2>Комментарии</h2><br>
                     <div id="comments"></div><br>
+                    <div class="text-muted">
+                        <p>
+                            <?php echo $date_debug_info; ?>
+                        </p>
+                    </div>
                     <?php
                 } else {
                     echo 'semester or week not specified';

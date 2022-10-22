@@ -7,8 +7,13 @@ function requestForm(url, data, callback) {
             callback(xhr.response);
         }
     };
+    let formData = data ? (data instanceof FormData ? data : new FormData(document.querySelector(data))) : new FormData();
+    let csrfMetaTag = document.querySelector('meta[name="csrf-token"]');
+    if (csrfMetaTag) {
+        formData.append('csrf-token', csrfMetaTag.getAttribute("content"));
+    }
 
-    xhr.send(data ? (data instanceof FormData ? data : new FormData(document.querySelector(data))) : undefined);
+    xhr.send(formData);
 }
 
 function register() {
@@ -20,7 +25,7 @@ function register() {
             if (data instanceof Array) {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i] === 0) {
-                        errors_div.innerHTML += '<div class="container text-success py-1 px-0">Ваш аккаунт успешно создан</div>';
+                        errors_div.innerHTML += '<div class="container text-success py-1 px-0">На вашу почту было отправлено письмо с ссылкой для подтверждения регистрации.</div>';
                         document.getElementById('formRegister').reset();
                     }
 
@@ -61,20 +66,28 @@ function register() {
                     }
 
                     if (data[i] === 10) {
-                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0"></div>';
+                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Ошибка безопасности: csrf-token не задан или не совпадает</div>';
                     }
 
                     if (data[i] === 11) {
-                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0"></div>';
+                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Отправка электронного письма не удалась</div>';
                     }
 
                     if (data[i] === 12) {
-                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0"></div>';
+                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Вы превысили максимальное количество запросов на регистрацию</div>';
                     }
-
-
+                    
+                    if (data[i] === 13) {
+                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Ошибка проверки регистрации. Обратитесь к поддержке сайта.</div>';
+                    }
                 }
             }
         }
     });
+}
+
+const registerbtn = document.querySelector("#registerbtn");
+
+if (registerbtn) {
+    registerbtn.addEventListener("click", register);
 }
