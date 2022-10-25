@@ -1,3 +1,5 @@
+<?php require_once 'php/utils.php'; ?>
+<?php require_once 'php/auth.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <div class="mr-3">
@@ -20,12 +22,21 @@
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/signin.php">Войти</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/signup.php">Зарегистрироваться</a>
-                </li>
+                <?php if (isLoggedIn()): ?>
+                    <li class="nav-item mr-2">
+                        <span class="text-white navbar-text"><?php echo $_SESSION["user_name"]; ?></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/logout.php">Выход</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/signin.php">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/signup.php">Зарегистрироваться</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

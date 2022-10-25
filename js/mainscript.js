@@ -76,7 +76,7 @@ function register() {
                     if (data[i] === 12) {
                         errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Вы превысили максимальное количество запросов на регистрацию</div>';
                     }
-                    
+
                     if (data[i] === 13) {
                         errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Ошибка проверки регистрации. Обратитесь к поддержке сайта.</div>';
                     }
@@ -86,8 +86,23 @@ function register() {
     });
 }
 
+function login() {
+    requestForm("php/login.php", "#formLogin", function (data) {
+        if (data === "success") {
+            location.pathname = "index.php";
+            return;
+        }
+        document.getElementById("errors").innerHTML = data;
+    });
+}
+
 const registerbtn = document.querySelector("#registerbtn");
+const loginbtn = document.querySelector("#loginbtn");
 
 if (registerbtn) {
     registerbtn.addEventListener("click", register);
+}
+
+if (loginbtn) {
+    loginbtn.addEventListener("click", login);
 }

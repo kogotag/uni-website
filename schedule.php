@@ -1,4 +1,5 @@
 <?php require_once 'php/utils.php'; ?>
+<?php require_once 'php/auth.php'; ?>
 <html>
     <head>
         <meta charset="utf-8">

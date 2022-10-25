@@ -51,8 +51,8 @@ if (count($errors) !== 0) {
     exit();
 }
 
-$password_salt = generateRandomString();
-$password_hash = password_hash($password . $password_salt, PASSWORD_DEFAULT);
+//$password_salt = generateRandomString();
+$password_hash = password_hash($password, PASSWORD_DEFAULT);
 
 try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
