@@ -36,13 +36,11 @@
                     $date_current_week_monday = $date_first_monday->modify("+" . $week - 1 . " weeks");
                     $date_weekday_iterator = clone $date_current_week_monday;
                     ?>
-                    <div class="row">
-                        <div class="col-12 align-content-between">
-                            <div class="d-flex mx-2 justify-content-between">
-                                <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week - 1 > 0 ? $week - 1 : 1; ?>"><h3>&lt;</h3></a>
-                                <span><h3>Неделя <?php echo $week; ?></h3></span>
-                                <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week + 1; ?>"><h3>&gt;</h3></a>
-                            </div>
+                    <div class="container-fluid">
+                        <div class="d-flex mx-2 justify-content-between">
+                            <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week - 1 > 0 ? $week - 1 : 1; ?>"><h3>&lt;</h3></a>
+                            <span><h3>Неделя <?php echo $week; ?></h3></span>
+                            <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week + 1; ?>"><h3>&gt;</h3></a>
                         </div>
                     </div>
                     <div class="table-responsive">
