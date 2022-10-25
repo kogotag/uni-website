@@ -1,4 +1,4 @@
-<footer class="text-start text-muted border-top bg-light">
+<footer class="text-center text-lg-left text-muted border-top bg-light">
     <section>
         <div class="d-flex flex-column flex-lg-row justify-content-lg-between justify-content-center align-items-center mt-4 mb-3 mx-footer">
             <div class="px-0 py-0 footer-block-links">
