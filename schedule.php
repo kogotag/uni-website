@@ -96,18 +96,25 @@
                             </tbody>
                         </table>
                     </div>
-                    <span class="text-danger">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</span><br>
-                    <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
-                    <h2>Описание</h2><br>
-                    <div id="description"></div><br>
-                    <h2>Медиа</h2><br>
-                    <div id="media"></div><br>
-                    <h2>Комментарии</h2><br>
-                    <div id="comments"></div><br>
-                    <div class="text-muted">
-                        <p>
-                            <?php echo $date_debug_info; ?>
-                        </p>
+                    <div class="container-fluid px-3 py-2">
+                        <span class="text-danger">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</span><br>
+                        <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
+                        <h2 class="mt-2">Описание</h2>
+                        <div id="description"></div>
+                        <h2 class="mt-2">Медиа</h2>
+
+                        <div id="media"></div>
+                        <h2 class="mt-2">Комментарии</h2>
+                        <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
+                            <div id="sendCommentInfo"></div>
+                            <form id="addComment">
+                                <div class="form-group">
+                                    <textarea class="form-control" id="commentTextArea" rows="6" placeholder="Введите сообщение..."></textarea>
+                                </div>
+                                <div class="btn btn-primary" id="sendComment">Отправить</div>
+                            </form>
+                        <?php endif; ?>
+                        <div id="comments"></div>
                     </div>
                     <?php
                 } else {
@@ -121,7 +128,6 @@
         ?>
 
         <?php require 'footer.php'; ?>
-        <script src="js/mainscript.js"></script>
         <script src="js/schedule_table.js"></script>
         <script src="js/jquery-3.6.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>

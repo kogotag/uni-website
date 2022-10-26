@@ -1,6 +1,7 @@
 <?php
 
 require_once 'config.inc.php';
+require_once 'russianDateFormatter.php';
 
 $errors = [];
 
@@ -50,6 +51,7 @@ try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
     $stmt_day = $dbh->prepare("SELECT * FROM `subjects_comments` WHERE semester=? AND week=? AND day=? AND number=? ORDER BY `id`;");
     $result_day = $stmt_day->execute(array($semester, $week, $day, $number));
+
     $comments = [];
     if ($result_day) {
         $comments = $stmt_day->fetchAll();
@@ -62,7 +64,10 @@ try {
         if ($result_user) {
             $user_name = $stmt_user->fetch()["name"];
         }
-        echo '<span class="font-weight-bold">', $user_name, '</span><br><span>', $comment["content"], '</span><br>';
+
+        $timestamp = new DateTime($comment["timestamp"]);
+
+        echo '<small class="font-weight-bold">', $user_name, '</small>&nbsp;<small class=text-muted>', getTimeElapsed($timestamp), '</small><p>', $comment["content"], '</p><br>';
     }
 } catch (Exception $ex) {
     print($ex->getMessage());
