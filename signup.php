@@ -23,7 +23,6 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="col-lg-6">
-                    <div class="container px-0 pt-0 pb-3 text-left text-info"><span class="text-danger font-weight-bold">! </span>Система регистрации ещё в процессе разработки. Зайдите сюда позже.</div>
                     <div id="errors" class="container px-0 py-0"></div>
                     <form id="formRegister" class="mx-0" style="width: 100%;">
                         <div class="form-group my-0">
