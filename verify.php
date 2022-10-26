@@ -1,23 +1,39 @@
 <?php
 
 require_once 'php/utils.php';
-
-$verification_code = htmlspecialchars(filter_input(INPUT_GET, "code"));
-
-if ($verification_code == null || empty($verification_code)) {
-    echo "Некорректный код подтверждения";
-    exit();
-}
-
 try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
-    $stmt_check_verification = $dbh->prepare("SELECT * FROM `verification_links` WHERE `code`=?;");
-    $exec_check_verification = $stmt_check_verification->execute(array($verification_code));
 
-    if (!$exec_check_verification) {
-        echo "Ошибка запроса БД";
+    $ip = filter_input(INPUT_SERVER, "REMOTE_ADDR");
+
+    $stmt_get_verify_visits = $dbh->prepare("SELECT * FROM `verify_visits` WHERE `ip`=?;");
+    $exec_get_verify_visits = $stmt_get_verify_visits->execute(array($ip));
+
+    $get_verify_visits = $stmt_get_verify_visits->fetch();
+
+    if (empty($get_verify_visits)) {
+        $stmt_add_verify_visit = $dbh->prepare("INSERT INTO `verify_visits` (`ip`) VALUES(?);");
+        $exec_add_verify_visit = $stmt_add_verify_visit->execute(array($ip));
+    } else {
+        $stmt_inc_visits = $dbh->prepare("UPDATE `verify_visits` SET count=count+1 WHERE `ip`=?;");
+        $stmt_inc_visits->execute(array($ip));
+
+        if ($get_verify_visits["count"] >= VERIFY_PAGE_MAX_VISITS_PER_HOUR) {
+            exit();
+        }
+    }
+
+    // TODO: sql-scheduler which truncates verify_visits table once per hour
+
+    $verification_code = htmlspecialchars(filter_input(INPUT_GET, "code"));
+
+    if ($verification_code == null || empty($verification_code)) {
+        echo "Некорректный код подтверждения";
         exit();
     }
+
+    $stmt_check_verification = $dbh->prepare("SELECT * FROM `verification_links` WHERE `code`=?;");
+    $exec_check_verification = $stmt_check_verification->execute(array($verification_code));
 
     $check_verification_result = $stmt_check_verification->fetchAll();
 

@@ -12,6 +12,7 @@ define("SMTP_FROMNAME", "Mehaniki 1105");
 
 define("SMTP_VERIFICATIONS_PER_DAY", 3);
 define("LOGIN_MAX_ATTEMPTS_PER_HOUR", 10);
+define("VERIFY_PAGE_MAX_VISITS_PER_HOUR", 10);
 
 define("CSRF_TOKEN_SECRET", "gsg6h65hdfgdfg");
 
