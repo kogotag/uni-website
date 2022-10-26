@@ -47,7 +47,7 @@ if ($email == null || strlen($email) > 255 || !filter_var($email, FILTER_VALIDAT
 }
 
 if (count($errors) !== 0) {
-    echo(json_encode($errors));
+    echo json_encode($errors);
     exit();
 }
 
@@ -63,7 +63,7 @@ try {
     if ($check_login == null || !$check_login) {
         $stmt_check_login = null;
         $errors[] = 7;
-        echo(json_encode($errors));
+        echo json_encode($errors);
         exit();
     }
 
@@ -78,7 +78,7 @@ try {
     if ($check_email == null || !$check_email) {
         $stmt_check_email = null;
         $errors[] = 7;
-        echo(json_encode($errors));
+        echo json_encode($errors);
         exit();
     }
 
@@ -93,7 +93,7 @@ try {
     if ($exec_check_ip == null || !$exec_check_ip) {
         $stmt_check_ip = null;
         $errors[] = 7;
-        echo(json_encode($errors));
+        echo json_encode($errors);
         exit();
     }
 
@@ -110,17 +110,17 @@ try {
 
     if ($attempts_count > SMTP_VERIFICATIONS_PER_DAY) {
         $errors[] = 12;
-        echo(json_encode($errors));
+        echo json_encode($errors);
         exit();
     }
 
     if (count($errors) !== 0) {
-        echo(json_encode($errors));
+        echo json_encode($errors);
         exit();
     }
 
-    $stmt_register_user = $dbh->prepare("INSERT INTO `users` (`login`, `password_hash`, `password_salt`, `name`, `email`) VALUES(?, ?, ?, ?, ?);");
-    $exec_register_user = $stmt_register_user->execute(array($login, $password_hash, $password_salt, $name, $email));
+    $stmt_register_user = $dbh->prepare("INSERT INTO `users` (`login`, `password_hash`, `name`, `email`) VALUES(?, ?, ?, ?);");
+    $exec_register_user = $stmt_register_user->execute(array($login, $password_hash, $name, $email));
 
     $stmt_check_user = $dbh->prepare("SELECT * FROM `users` WHERE `email`=?;");
     $exec_check_user = $stmt_check_user->execute(array($email));

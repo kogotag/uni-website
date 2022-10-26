@@ -21,7 +21,11 @@ function register() {
     errors_div.innerHTML = '';
     requestForm('php/register.php', '#formRegister', function (data) {
         if (data) {
-            data = JSON.parse(data);
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                console.log("returned not json");
+            }
             if (data instanceof Array) {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i] === 0) {
