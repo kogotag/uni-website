@@ -15,6 +15,12 @@ if (sendAudioButton) {
     sendAudioButton.addEventListener("click", sendAudio);
 }
 
+const sendVideoButton = document.getElementById("sendVideo");
+
+if (sendVideoButton) {
+    sendVideoButton.addEventListener("click", sendVideo);
+}
+
 const sendCommentInfo = document.getElementById("sendCommentInfo");
 const commentTextArea = document.getElementById("commentTextArea");
 const comments = document.getElementById("comments");
@@ -22,6 +28,7 @@ const sendMediaInfo = document.getElementById("sendMediaInfo");
 const audioInput = document.getElementById("audioInput");
 const audioModal = document.getElementById("audioModal");
 const uploadBar = document.getElementById("uploadBar");
+const videoUrlInput = document.getElementById("videoUrlInput");
 
 function findGetParameter(parameterName) {
     var result = null,
@@ -235,6 +242,57 @@ function sendAudio() {
             const percentCompleted = Math.floor(progressEvent.loaded / progressEvent.total * 100);
             if (uploadBar) {
                 uploadBar.setAttribute("value", percentCompleted);
+            }
+        }
+    });
+}
+
+function sendVideo() {
+    if (!selectedCell) {
+        if (sendMediaInfo) {
+            sendMediaInfo.innerHTML = "Выберите ячейку";
+        }
+        return;
+    } else {
+        sendMediaInfo.innerHTML = "";
+    }
+
+    if (!videoUrlInput || videoUrlInput.value.trim() === "") {
+        if (sendMediaInfo) {
+            sendMediaInfo.innerHTML = "Введите ссылку на видео";
+        }
+        return;
+    } else {
+        sendMediaInfo.innerHTML = "";
+    }
+
+    let day = selectedCell.classList[0];
+    let number = selectedCell.classList[1];
+
+    if (!semester || !week || !day || !number) {
+        console.log("vseploha");
+        return;
+    }
+
+    day = day.substring(3);
+    number = number.substring(6);
+
+    requestWithCsrf("php/sendVideo.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&content=" + videoUrlInput.value, function (data) {
+        if (data === "success") {
+            if (sendMediaInfo) {
+                sendMediaInfo.innerHTML = "Ссылка добавлена";
+            }
+
+            request("/php/getMedia.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+                document.getElementById("media").innerHTML = data;
+            });
+
+            request("/php/getAudios.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+                document.getElementById("media").innerHTML += data;
+            });
+        } else {
+            if (sendMediaInfo) {
+                sendMediaInfo.innerHTML = data;
             }
         }
     });

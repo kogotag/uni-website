@@ -101,7 +101,7 @@
                         <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
                             <h2 class="mt-2">Описание</h2>
-                            <div id="description"></div>
+                            <div id="description" class="my-2"></div>
                             <h2 class="mt-2">Медиа</h2>
                             <div id="sendMediaInfo"></div>
                             <?php if ($_SESSION["user_admin_rank"] === 1): ?>
@@ -126,8 +126,34 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="btn btn-primary mt-2 mr-2" id="openVideoModal" data-toggle="modal" data-target="#videoModal">
+                                    Добавить видео
+                                </div>
+                                <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Добавить видео</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container-fluid px-2">
+                                                    <form>
+                                                        <div class="form-group my-0">
+                                                            <label for="videoUrlInput">Ссылка</label>
+                                                            <input type="text" id="videoUrlInput" name="videoUrlInput">
+                                                        </div>
+                                                    </form>
+
+                                                    <div class="btn btn-primary mt-2 mr-2" id="sendVideo">
+                                                        Отправить
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endif; ?>
-                            <div id="media"></div>
+                            <div id="media" class="my-2"></div>
                             <h2 class="mt-2">Комментарии</h2>
                             <div id="sendCommentInfo"></div>
                             <div class="row">
@@ -136,14 +162,14 @@
                                     <div class="btn btn-primary mt-2" id="sendComment">Отправить</div>
                                 </div>
                             </div>
-                            <div id="comments"></div>
+                            <div id="comments" class="my-2"></div>
                         <?php else: ?>
                             <h2 class="mt-2">Описание</h2>
-                            <div id="description"></div>
+                            <div id="description" class="my-2"></div>
                             <h2 class="mt-2">Медиа</h2>
-                            <div id="media"></div>
+                            <div id="media" class="my-2"></div>
                             <h2 class="mt-2">Комментарии</h2>
-                            <div id="comments"></div>
+                            <div id="comments" class="my-2"></div>
                         <?php endif; ?>
                     </div>
                     <?php

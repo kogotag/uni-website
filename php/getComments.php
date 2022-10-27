@@ -67,7 +67,7 @@ try {
 
         $timestamp = new DateTime($comment["timestamp"]);
 
-        echo '<small class="font-weight-bold">', $user_name, '</small>&nbsp;<small class=text-muted>', getTimeElapsed($timestamp), '</small><p>', $comment["content"], '</p><br>';
+        echo '<small class="font-weight-bold">', $user_name, '</small>&nbsp;<small class=text-muted>', getTimeElapsed($timestamp), '</small><p>', $comment["content"], '</p>';
     }
 } catch (Exception $ex) {
     print($ex->getMessage());
