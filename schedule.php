@@ -99,13 +99,36 @@
                     <div class="container-fluid px-3 py-2">
                         <span class="text-danger">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</span><br>
                         <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
-                        <h2 class="mt-2">Описание</h2>
-                        <div id="description"></div>
-                        <h2 class="mt-2">Медиа</h2>
-
-                        <div id="media"></div>
-                        <h2 class="mt-2">Комментарии</h2>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
+                            <h2 class="mt-2">Описание</h2>
+                            <div id="description"></div>
+                            <h2 class="mt-2">Медиа</h2>
+                            <div id="sendMediaInfo"></div>
+                            <?php if ($_SESSION["user_admin_rank"] === 1): ?>
+                                <div class="btn btn-primary mt-2 mr-2" id="openAudioModal" data-toggle="modal" data-target="#audioModal">
+                                    Добавить аудио
+                                </div>
+                                <div class="modal fade" id="audioModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Добавить аудио</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="file" id="audioInput">
+                                                <div class="container-fluid px-0 mt-1">
+                                                    <progress id="uploadBar" value="0" max="100"></progress>
+                                                </div>
+                                                <div class="btn btn-primary mt-2 mr-2" id="sendAudio">
+                                                    Отправить
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <div id="media"></div>
+                            <h2 class="mt-2">Комментарии</h2>
                             <div id="sendCommentInfo"></div>
                             <div class="row">
                                 <div class="col-12 col-md-6 col-lg-4">
@@ -113,8 +136,15 @@
                                     <div class="btn btn-primary mt-2" id="sendComment">Отправить</div>
                                 </div>
                             </div>
+                            <div id="comments"></div>
+                        <?php else: ?>
+                            <h2 class="mt-2">Описание</h2>
+                            <div id="description"></div>
+                            <h2 class="mt-2">Медиа</h2>
+                            <div id="media"></div>
+                            <h2 class="mt-2">Комментарии</h2>
+                            <div id="comments"></div>
                         <?php endif; ?>
-                        <div id="comments"></div>
                     </div>
                     <?php
                 } else {

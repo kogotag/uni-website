@@ -13,13 +13,18 @@ if ($_SESSION["user_from_group"] !== 1) {
     exit();
 }
 
+if ($_SESSION["user_admin_rank"] !== 1) {
+    echo 'Только администраторы могут добавлять аудио';
+    exit();
+}
+
 $errors = false;
 
 $semester = htmlspecialchars(filter_input(INPUT_POST, "semester"));
 $week = htmlspecialchars(filter_input(INPUT_POST, "week"));
 $day = htmlspecialchars(filter_input(INPUT_POST, "day"));
 $number = htmlspecialchars(filter_input(INPUT_POST, "number"));
-$content = htmlspecialchars(filter_input(INPUT_POST, "content"));
+$content = $_FILES["content"];
 $csrf_token = htmlspecialchars(trim(filter_input(INPUT_POST, 'csrf-token')));
 
 if ($csrf_token == null || !validateToken($csrf_token)) {
@@ -48,7 +53,7 @@ if ($number == null || strlen($number) === 0 || strlen($number) > 255) {
     $errors = true;
 }
 
-if ($content == null || strlen($content) === 0 || strlen($content) > 2000) {
+if (empty($content)) {
     echo "Неправильный формат сообщения<br>";
     $errors = true;
 }
@@ -82,12 +87,58 @@ if ($errors) {
 }
 
 try {
+    $upload_dir = "/var/www/html/media/semester" . $semester . "/";
+    $file_full_name = htmlspecialchars($content["name"]);
+
+    if (str_contains($file_full_name, "/")) {
+        echo "Имя файла не должно содержать символа &#47;";
+        exit();
+    }
+
+    if ($content["size"] > MAX_AUDIO_FILE_SIZE) {
+        echo "Размер файла не должен превышать " . MAX_AUDIO_FILE_SIZE . " байт";
+        exit();
+    }
+
+    $file_name_parts = explode(".", $file_full_name);
+    $file_name = "";
+    $file_extension = "";
+    if (count($file_name_parts) === 1) {
+        $file_name = $file_name_parts[0];
+        $file_extension = "";
+    } else {
+        $file_name = implode(array_slice($file_name_parts, 0, count($file_name_parts) - 1));
+        $file_extension = $file_name_parts[count($file_name_parts) - 1];
+    }
+
+    if (strtolower($file_extension) !== "mp3") {
+        echo "Разрешённые расширения файла: mp3";
+        exit();
+    }
+
+    $target_file = $upload_dir . $file_full_name;
+    $i = 1;
+    while (true) {
+        if (!file_exists($target_file)) {
+            break;
+        }
+        $target_file = $upload_dir . $file_name . $i . "." . ($file_extension ? $file_extension : "");
+        $i++;
+    }
+
+    if (!move_uploaded_file($content["tmp_name"], $target_file)) {
+        echo "Ошибка: файл не был загружен";
+        exit();
+    }
+
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
-    $stmt_add_comment = $dbh->prepare("INSERT INTO `subjects_comments` (`semester`, `week`, `day`, `number`, `user_id`, `content`) VALUES(?, ?, ?, ?, ?, ?);");
-    $exec_add_comment = $stmt_add_comment->execute(array($semester, $week, $day, $number, $_SESSION["user_id"], $content));
-    
-    if($exec_add_comment){
+    $db_file_name = str_replace("/var/www/html", "", $target_file);
+
+    $stmt_add_audio = $dbh->prepare("INSERT INTO `subjects_audios` (`semester`, `week`, `day`, `number`, `user_id`, `url`) VALUES(?, ?, ?, ?, ?, ?);");
+    $exec_add_audio = $stmt_add_audio->execute(array($semester, $week, $day, $number, $_SESSION["user_id"], $db_file_name));
+
+    if ($exec_add_audio) {
         echo "success";
     }
 } catch (Exception $ex) {

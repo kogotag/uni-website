@@ -16,6 +16,8 @@ define("VERIFY_PAGE_MAX_VISITS_PER_HOUR", 10);
 
 define("CSRF_TOKEN_SECRET", "gsg6h65hdfgdfg");
 
+define("MAX_AUDIO_FILE_SIZE", 300 * 1024 * 1024);
+
 //Cookie settings
 session_set_cookie_params(['samesite' => 'strict']);
 session_start();
