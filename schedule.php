@@ -107,12 +107,12 @@
                         <h2 class="mt-2">Комментарии</h2>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
                             <div id="sendCommentInfo"></div>
-                            <form id="addComment">
-                                <div class="form-group">
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-lg-4">
                                     <textarea class="form-control" id="commentTextArea" rows="6" placeholder="Введите сообщение..."></textarea>
+                                    <div class="btn btn-primary mt-2" id="sendComment">Отправить</div>
                                 </div>
-                                <div class="btn btn-primary" id="sendComment">Отправить</div>
-                            </form>
+                            </div>
                         <?php endif; ?>
                         <div id="comments"></div>
                     </div>
