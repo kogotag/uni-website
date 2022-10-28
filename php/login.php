@@ -12,7 +12,12 @@ try {
 
     if ($csrf_token == null || !validateToken($csrf_token)) {
         echo '<p>Ошибка безопасности: csrf-token not set</p>';
-        $errors = true;
+        exit();
+    }
+    
+    if ($_SESSION["user_id"]){
+        echo "<p>Вы уже вошли</p>";
+        exit();
     }
 
     if ($login == null || empty($login) || strlen($login) > 255) {

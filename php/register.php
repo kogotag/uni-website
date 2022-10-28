@@ -16,6 +16,7 @@ $password = htmlspecialchars(trim(filter_input(INPUT_POST, 'password')));
 $password_repeat = htmlspecialchars(trim(filter_input(INPUT_POST, 'password_repeat')));
 $name = htmlspecialchars(trim(filter_input(INPUT_POST, 'name')));
 $email = htmlspecialchars(trim(filter_input(INPUT_POST, 'email')));
+$acceptRules = htmlspecialchars(trim(filter_input(INPUT_POST, 'acceptRulesCheckbox')));
 $csrf_token = htmlspecialchars(trim(filter_input(INPUT_POST, 'csrf-token')));
 $ip = filter_input(INPUT_SERVER, "REMOTE_ADDR");
 
@@ -44,6 +45,10 @@ if ($email == null || strlen($email) > 255 || !filter_var($email, FILTER_VALIDAT
     $errors[] = 5;
 } else if (!checkdnsrr(substr($email, strpos($email, '@') + 1), 'MX')) {
     $errors[] = 6;
+}
+
+if (empty($acceptRules)) {
+    $errors[] = 14;
 }
 
 if (count($errors) !== 0) {

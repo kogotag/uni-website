@@ -21,6 +21,12 @@ if (sendVideoButton) {
     sendVideoButton.addEventListener("click", sendVideo);
 }
 
+const changeDescButton = document.getElementById("changeDescButton");
+
+if (changeDescButton) {
+    changeDescButton.addEventListener("click", changeDesc);
+}
+
 const sendCommentInfo = document.getElementById("sendCommentInfo");
 const commentTextArea = document.getElementById("commentTextArea");
 const comments = document.getElementById("comments");
@@ -29,6 +35,10 @@ const audioInput = document.getElementById("audioInput");
 const audioModal = document.getElementById("audioModal");
 const uploadBar = document.getElementById("uploadBar");
 const videoUrlInput = document.getElementById("videoUrlInput");
+const changeDescInfo = document.getElementById("changeDescInfo");
+const hwOnThisDayInput = document.getElementById("hwOnThisDayInput");
+const hwFromThisDayInput = document.getElementById("hwFromThisDayInput");
+const descModal = document.getElementById("descModal");
 
 function findGetParameter(parameterName) {
     var result = null,
@@ -121,6 +131,10 @@ function selectCell(event) {
 
     day = day.substring(3);
     number = number.substring(6);
+
+    request("/php/getDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+        document.getElementById("description").innerHTML = data;
+    });
 
     request("/php/getComments.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
         document.getElementById("comments").innerHTML = data;
@@ -293,6 +307,48 @@ function sendVideo() {
         } else {
             if (sendMediaInfo) {
                 sendMediaInfo.innerHTML = data;
+            }
+        }
+    });
+}
+
+function changeDesc() {
+    if (!selectedCell) {
+        if (changeDescInfo) {
+            changeDescInfo.innerHTML = "Выберите ячейку";
+        }
+        return;
+    } else {
+        changeDescInfo.innerHTML = "";
+    }
+
+    if (!descModal) {
+        return;
+    }
+
+    let day = selectedCell.classList[0];
+    let number = selectedCell.classList[1];
+
+    if (!semester || !week || !day || !number) {
+        console.log("vseploha");
+        return;
+    }
+
+    day = day.substring(3);
+    number = number.substring(6);
+
+    requestWithCsrf("php/changeDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&hwOn=" + hwOnThisDayInput.value + "&hwFrom=" + hwFromThisDayInput.value, function (data) {
+        if (data === "success") {
+            if (changeDescInfo) {
+                changeDescInfo.innerHTML = "Описание изменено";
+            }
+
+            request("/php/getDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+                document.getElementById("description").innerHTML = data;
+            });
+        } else {
+            if (changeDescInfo) {
+                changeDescInfo.innerHTML = data;
             }
         }
     });

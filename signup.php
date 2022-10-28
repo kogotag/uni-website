@@ -55,6 +55,10 @@
                                 <input class="form-control" type="password" name="password_repeat" id="password_repeat" placeholder="Пароль"><br>
                             </div>
                         </div>
+                        <div class="form-group mt-1 mb-2 form-check">
+                            <input type="checkbox" class="form-check-input" id="acceptRulesCheckbox" name="acceptRulesCheckbox">
+                            <label class="form-check-label" for="acceptRulesCheckbox">Я соглашаюсь с <a href="rules.php">правилами пользования сайтом</a></label>
+                        </div>
                         <div class="btn btn-primary" id="registerbtn">Зарегистрировать</div>
                     </form>
                 </div>

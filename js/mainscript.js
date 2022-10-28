@@ -84,6 +84,10 @@ function register() {
                     if (data[i] === 13) {
                         errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Ошибка проверки регистрации. Обратитесь к поддержке сайта.</div>';
                     }
+
+                    if (data[i] === 14) {
+                        errors_div.innerHTML += '<div class="container text-danger py-1 px-0">Для регистрации необходимо согласиться с правилами.</div>';
+                    }
                 }
             }
         }

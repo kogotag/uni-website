@@ -101,6 +101,38 @@
                         <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
                             <h2 class="mt-2">Описание</h2>
+                            <?php if ($_SESSION["user_admin_rank"] === 1): ?>
+                                <div class="btn btn-primary mt-2 mr-2" id="openDescModal" data-toggle="modal" data-target="#descModal">
+                                    Изменить описание
+                                </div>
+                                <div class="modal fade" id="descModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Изменить описание</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container-fluid">
+                                                    <div id="changeDescInfo"></div>
+                                                    <form class="mx-0">
+                                                        <div class="form-group my-0">
+                                                            <label for="hwOnThisDayInput">Домашнее задание на этот день</label>
+                                                            <input type="text" id="hwOnThisDayInput" name="hwOnThisDayInput">
+                                                        </div>
+                                                        <div class="form-group my-0">
+                                                            <label for="hwFromThisDayInput">Домашнее задание, которое задали в этот день</label>
+                                                            <input type="text" id="hwFromThisDayInput" name="hwFromThisDayInput">
+                                                        </div>
+                                                    </form>
+                                                    <div class="btn btn-primary mt-2 mr-2" id="changeDescButton">
+                                                        Отправить
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                             <div id="description" class="my-2"></div>
                             <h2 class="mt-2">Медиа</h2>
                             <div id="sendMediaInfo"></div>
