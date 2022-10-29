@@ -61,7 +61,7 @@ try {
     $hwOn = $current_desc["hwOn"];
     $hwFrom = $current_desc["hwFrom"];
 
-    if (empty(trim($hwOn)) || empty(trim($hwFrom))) {
+    if (empty(trim($hwOn)) && empty(trim($hwFrom))) {
         exit();
     }
 
