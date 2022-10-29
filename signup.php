@@ -68,7 +68,6 @@
 
         <?php require 'footer.php'; ?>
         <script src="js/mainscript.js"></script>
-        <script src="js/jquery-3.6.1.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <?php require 'php/importImportantJsScripts.php'; ?>
     </body>
 </html>

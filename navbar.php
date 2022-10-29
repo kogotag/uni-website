@@ -1,5 +1,6 @@
 <?php require_once 'php/utils.php'; ?>
 <?php require_once 'php/auth.php'; ?>
+<?php require_once 'russianDateFormatter.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <div class="mr-3">
