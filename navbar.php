@@ -1,6 +1,6 @@
 <?php require_once 'php/utils.php'; ?>
 <?php require_once 'php/auth.php'; ?>
-<?php require_once 'russianDateFormatter.php'; ?>
+<?php require_once 'php/semesterDates.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <div class="mr-3">
@@ -15,8 +15,14 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/index.php">Главная</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/schedule.php">Расписание</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="" role="button" data-toggle="dropdown" aria-expanded="false">
+                        Расписание
+                    </a>
+                    <div class="dropdown-menu bg-primary px-2">
+                        <a class="nav-link text-light" href="/schedule.php">Наше расписание</a>
+                        <a class="nav-link text-light" href="https://ssau.ru/rasp?groupId=531233720&selectedWeek=<?php echo $SM_week; ?>&selectedWeekday=<?php echo $SM_day; ?>">ssau.ru сегодня</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/media.php">Медиа</a>
