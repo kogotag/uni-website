@@ -97,8 +97,9 @@
                         </table>
                     </div>
                     <div class="container-fluid px-3 py-2">
-                        <span class="text-danger">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</span><br>
-                        <span class="text-muted">Выберите предмет, чтобы получить информацию</span><br>
+                        <a href="https://ssau.ru/rasp?groupId=531233720&selectedWeek=<?php echo $week; ?>&selectedWeekday=1">ssau.ru расписание на эту неделю</a>
+                        <p class="text-danger mb-0">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</p>
+                        <p class="text-muted mb-0">Выберите предмет, чтобы получить информацию</p>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
                             <h2 class="mt-2">Описание</h2>
                             <?php if ($_SESSION["user_admin_rank"] === 1): ?>
