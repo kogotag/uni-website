@@ -59,7 +59,7 @@ const week = findGetParameter("week");
 
 function request(url, data, callback) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', url, true);
+    xhr.open('POST', url, false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.onload = function () {
