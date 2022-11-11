@@ -114,6 +114,19 @@ function requestForm(url, data, onload_callback, onprogress_callback = undefined
     xhr.send(formData);
 }
 
+function updateScheduleContent(semester, week, day, number){
+    request("/php/scheduleGetContent.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+        try {
+            data = JSON.parse(data);
+            document.getElementById("description").innerHTML = data["desc"];
+            document.getElementById("comments").innerHTML = data["comments"];
+            document.getElementById("media").innerHTML = data["videos"] + data["audios"];
+        } catch (e) {
+            console.log("scheduleGetContent.php returned not json: " + data);
+        }
+    });
+}
+
 function selectCell(event) {
     if (selectedCell) {
         selectedCell.classList.remove("table-success");
@@ -132,21 +145,7 @@ function selectCell(event) {
     day = day.substring(3);
     number = number.substring(6);
 
-    request("/php/getDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-        document.getElementById("description").innerHTML = data;
-    });
-
-    request("/php/getComments.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-        document.getElementById("comments").innerHTML = data;
-    });
-
-    request("/php/getMedia.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-        document.getElementById("media").innerHTML = data;
-    });
-
-    request("/php/getAudios.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-        document.getElementById("media").innerHTML += data;
-    });
+    updateScheduleContent(semester, week, day, number);
 }
 
 function sendComment() {
@@ -185,9 +184,7 @@ function sendComment() {
                 sendCommentInfo.innerHTML = "Сообщение отправлено";
             }
 
-            request("/php/getComments.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("comments").innerHTML = data;
-            });
+            updateScheduleContent(semester, week, day, number);
         } else {
             if (sendCommentInfo) {
                 sendCommentInfo.innerHTML = data;
@@ -239,13 +236,7 @@ function sendAudio() {
                 sendMediaInfo.innerHTML = "Аудио отправлено";
             }
 
-            request("/php/getMedia.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("media").innerHTML = data;
-            });
-
-            request("/php/getAudios.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("media").innerHTML += data;
-            });
+            updateScheduleContent(semester, week, day, number);
         } else {
             if (sendMediaInfo) {
                 sendMediaInfo.innerHTML = data;
@@ -297,13 +288,7 @@ function sendVideo() {
                 sendMediaInfo.innerHTML = "Ссылка добавлена";
             }
 
-            request("/php/getMedia.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("media").innerHTML = data;
-            });
-
-            request("/php/getAudios.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("media").innerHTML += data;
-            });
+            updateScheduleContent(semester, week, day, number);
         } else {
             if (sendMediaInfo) {
                 sendMediaInfo.innerHTML = data;
@@ -343,9 +328,7 @@ function changeDesc() {
                 changeDescInfo.innerHTML = "Описание изменено";
             }
 
-            request("/php/getDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
-                document.getElementById("description").innerHTML = data;
-            });
+            updateScheduleContent(semester, week, day, number);
         } else {
             if (changeDescInfo) {
                 changeDescInfo.innerHTML = data;
