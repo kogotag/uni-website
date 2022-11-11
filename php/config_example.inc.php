@@ -4,7 +4,7 @@
 define("DB_HOST", "localhost");
 define("DB_DATABASE", "uni_website");
 define("DB_USERNAME", "root");
-define("DB_PASSWORD", "F1f@7Lgi&Slm3");
+define("DB_PASSWORD", "root");
 
 //SMTP
 define("SMTP_FROM", "postmaster@mehaniki05.ru");
@@ -14,7 +14,7 @@ define("SMTP_VERIFICATIONS_PER_DAY", 3);
 define("LOGIN_MAX_ATTEMPTS_PER_HOUR", 10);
 define("VERIFY_PAGE_MAX_VISITS_PER_HOUR", 10);
 
-define("CSRF_TOKEN_SECRET", "gsg6h65hdfgdfg");
+define("CSRF_TOKEN_SECRET", "fghfghfh2");
 
 define("MAX_AUDIO_FILE_SIZE", 300 * 1024 * 1024);
 
