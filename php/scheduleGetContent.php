@@ -74,7 +74,7 @@ function getVideos() {
 
     foreach ($videos as $video) {
         $user_name = getUserById($video["user_id"]);
-        $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил видео:<br><a href="' . $video["video_url"] . '">' . $video["video_url"] . '</a><br>';
+        $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил видео:<br><a href="' . $video["url"] . '">' . $video["url"] . '</a><br>';
     }
 
     return $result;
@@ -106,13 +106,18 @@ function getDesc() {
     global $number;
 
     $desc = scheduleGetDesc($semester, $week, $day, $number);
+    $desc_prev = scheduleGetPrevDesc($semester, $week, $day, $number);
 
-    if (!$desc) {
-        return "";
+    $hwOn = "";
+    $hwFrom = "";
+    
+    if ($desc){
+        $hwFrom = $desc["hw"];
     }
-
-    $hwOn = $desc["hwOn"];
-    $hwFrom = $desc["hwFrom"];
+    
+    if ($desc_prev){
+        $hwOn = $desc_prev["hw"];
+    }
 
     if (empty(trim($hwOn)) && empty(trim($hwFrom))) {
         return "";

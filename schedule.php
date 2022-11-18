@@ -1,5 +1,7 @@
 <?php require_once 'php/utils.php'; ?>
 <?php require_once 'php/auth.php'; ?>
+<?php require_once 'php/databaseQueries.php'; ?>
+<?php require_once 'php/semesterTime.php'; ?>
 <html>
     <head>
         <meta charset="utf-8">
@@ -48,6 +50,7 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Время</th>
                                     <th>Понедельник<br><?php
                                         echo $date_weekday_iterator->format("d.m.Y");
                                         $date_weekday_iterator->modify("+1 days");
@@ -76,18 +79,16 @@
                             </thead>
                             <tbody>
                                 <?php
-                                for ($number = 1; $number <= 6; $number++) {
+                                for ($number = 1; $number <= 8; $number++) {
                                     echo '<tr>';
-                                    $stmt_row = $dbh->prepare("SELECT * FROM `ssau_schedule` WHERE semester=? AND week=? AND number=? ORDER BY `day`;");
-                                    $result_row = $stmt_row->execute(array($semester, $week, $number));
-                                    $subjects = [];
-                                    if ($result_row) {
-                                        $subjects = $stmt_row->fetchAll();
-                                    }
-                                    for ($day = 1; $day < count($subjects); $day++) {
+                                    echo '<td>', $semester_times[$semester][$number], '</td>';
+                                    
+                                    $subjects = getScheduleSubjectWithClassNumberBySemesterAndWeek($semester, $week, $number);
+                                    
+                                    for ($day = 1; $day <= 6; $day++) {
                                         $subject = $subjects[$day - 1];
                                         echo '<td id="selectableCell" class="day', $day, ' number', $number, '">';
-                                        echo $subject['subject_name'], '<br>', $subject['subject_lecturer'], '<br>', $subject['subject_classroom'];
+                                        echo getSubjectAliasNameBySubjectNameId($subject["subject_id"]), "&nbsp;", $subject["number"], '<br>', $subject['lecturer'], '<br>', $subject['room'];
                                         echo '</td>';
                                     }
                                     echo '</tr>';
