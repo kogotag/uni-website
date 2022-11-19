@@ -93,7 +93,7 @@ try {
         $hw_from_old = $current_desc["hw"];
     }
 
-    addDescChange($semester, $week, $day, $number, $hw_from_old, $hw_from);
+    addDescChange($semester, $week, $day, $number, $_SESSION["user_id"], $hw_from_old, $hw_from);
 
     echo updateDesc($semester, $week, $day, $number, $hw_from);
 } catch (Exception $ex) {

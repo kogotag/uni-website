@@ -149,13 +149,13 @@ function getSubjectAliasNameBySubjectNameId($subject_name_id) {
     return $result;
 }
 
-function addDescChange($semester, $week, $day, $class_number, $hw_old, $hw_new) {
+function addDescChange($semester, $week, $day, $class_number, $user_id, $hw_old, $hw_new) {
     global $dbh;
 
     $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
 
-    $stmt_info_change = $dbh->prepare("INSERT INTO `subjects_info_changes` (`subject_id`, `number`, `hwWas`, `hwNew`) VALUES (?, ?, ?, ?);");
-    $exec_info_change = $stmt_info_change->execute(array($result_schedule["subject_id"], $result_schedule["number"], $hw_old, $hw_new));
+    $stmt_info_change = $dbh->prepare("INSERT INTO `subjects_info_changes` (`subject_id`, `number`, `user_id`, `hwWas`, `hwNew`) VALUES (?, ?, ?, ?, ?);");
+    $exec_info_change = $stmt_info_change->execute(array($result_schedule["subject_id"], $result_schedule["number"], $user_id, $hw_old, $hw_new));
 
     return $exec_info_change;
 }
