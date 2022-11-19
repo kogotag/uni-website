@@ -31,7 +31,7 @@ setcookie(
         [
             'expires' => time() - 3600,
             'path' => '/',
-            'domain' => 'mehaniki05.ru',
+            'domain' => DOMAIN_NAME,
             'secure' => true,
             'httponly' => true,
             'samesite' => 'Strict',

@@ -118,10 +118,6 @@
                                                     <div id="changeDescInfo"></div>
                                                     <form class="mx-0">
                                                         <div class="form-group my-0">
-                                                            <label for="hwOnThisDayInput">Домашнее задание на этот день</label>
-                                                            <input type="text" id="hwOnThisDayInput" name="hwOnThisDayInput">
-                                                        </div>
-                                                        <div class="form-group my-0">
                                                             <label for="hwFromThisDayInput">Домашнее задание, которое задали в этот день</label>
                                                             <input type="text" id="hwFromThisDayInput" name="hwFromThisDayInput">
                                                         </div>

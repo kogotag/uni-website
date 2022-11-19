@@ -90,7 +90,7 @@ try {
                 [
                     'expires' => time() + 2 * 365 * 24 * 60 * 60,
                     'path' => '/',
-                    'domain' => 'mehaniki05.ru',
+                    'domain' => DOMAIN_NAME,
                     'secure' => true,
                     'httponly' => true,
                     'samesite' => 'Strict',

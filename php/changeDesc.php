@@ -2,6 +2,7 @@
 
 require_once 'utils.php';
 require_once 'auth.php';
+require_once 'databaseQueries.php';
 
 if (!isLoggedIn()) {
     echo 'Войдите, чтобы отправить сообщение';
@@ -19,8 +20,7 @@ $semester = htmlspecialchars(filter_input(INPUT_POST, "semester"));
 $week = htmlspecialchars(filter_input(INPUT_POST, "week"));
 $day = htmlspecialchars(filter_input(INPUT_POST, "day"));
 $number = htmlspecialchars(filter_input(INPUT_POST, "number"));
-$hwOn = htmlspecialchars(filter_input(INPUT_POST, "hwOn"));
-$hwFrom = htmlspecialchars(filter_input(INPUT_POST, "hwFrom"));
+$hw_from = htmlspecialchars(filter_input(INPUT_POST, "hwFrom"));
 $csrf_token = htmlspecialchars(trim(filter_input(INPUT_POST, 'csrf-token')));
 
 if ($csrf_token == null || !validateToken($csrf_token)) {
@@ -49,12 +49,7 @@ if ($number == null || strlen($number) === 0 || strlen($number) > 255) {
     $errors = true;
 }
 
-if (strlen($hwOn) > 1000) {
-    echo "Слишком длинная строка в поле домашнего задания на пару<br>";
-    $errors = true;
-}
-
-if (strlen($hwFrom) > 1000) {
+if (strlen($hw_from) > 1000) {
     echo "Слишком длинная строка в поле домашнего задания с пары<br>";
     $errors = true;
 }
@@ -90,34 +85,17 @@ if ($errors) {
 try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
-    $stmt_get_current_desc = $dbh->prepare("SELECT * FROM `subjects_info` WHERE semester=? AND week=? AND day=? AND number=?;");
-    $exec_get_current_desc = $stmt_get_current_desc->execute(array($semester, $week, $day, $number));
+    $current_desc = scheduleGetDesc($semester, $week, $day, $number);
 
-    $hwOn_old = "";
-    $hwFrom_old = "";
-    $current_desc = [];
-    if ($exec_get_current_desc) {
-        $current_desc = $stmt_get_current_desc->fetch();
-        if (!empty($current_desc)) {
-            $hwOn_old = $current_desc["hwOn"];
-            $hwFrom_old = $current_desc["hwFrom"];
-        }
+    $hw_from_old = "";
+
+    if (!empty($current_desc)) {
+        $hw_from_old = $current_desc["hw"];
     }
 
-    $stmt_add_change = $dbh->prepare("INSERT INTO `subjects_info_changes` (`semester`, `week`, `day`, `number`, `user_id`, `hwOnWas`, `hwOn`, `hwFromWas`, `hwFrom`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);");
-    $exec_add_change = $stmt_add_change->execute(array($semester, $week, $day, $number, $_SESSION["user_id"], $hwOn_old, $hwOn, $hwFrom_old, $hwFrom));
+    addDescChange($semester, $week, $day, $number, $hw_from_old, $hw_from);
 
-    if (empty($current_desc)) {
-        $stmt_insert_desc = $dbh->prepare("INSERT INTO `subjects_info` (`semester`, `week`, `day`, `number`, `hwOn`, `hwFrom`) VALUES(?, ?, ?, ?, ?, ?);");
-        $exec_insert_desc = $stmt_insert_desc->execute(array($semester, $week, $day, $number, $hwOn, $hwFrom));
-    } else {
-        $stmt_update_desc = $dbh->prepare("UPDATE `subjects_info` SET hwOn=?, hwFrom=? WHERE semester=? AND week=? AND day=? AND number=?;");
-        $exec_update_desc = $stmt_update_desc->execute(array($hwOn, $hwFrom, $semester, $week, $day, $number));
-    }
-
-    if ($exec_insert_desc || $exec_update_desc) {
-        echo "success";
-    }
+    echo updateDesc($semester, $week, $day, $number, $hw_from);
 } catch (Exception $ex) {
     echo $ex->getMessage();
 }

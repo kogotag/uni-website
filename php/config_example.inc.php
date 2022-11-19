@@ -1,5 +1,7 @@
 <?php
 
+define("DOMAIN_NAME", "mehaniki05.ru");
+
 //Database credentials
 define("DB_HOST", "localhost");
 define("DB_DATABASE", "uni_website");

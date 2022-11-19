@@ -19,6 +19,10 @@ try {
 
         $result_auth = $stmt_auth->fetch();
 
+        if (empty($result_auth)) {
+            exit();
+        }
+
         $stmt_user = $dbh->prepare("SELECT * FROM `users` WHERE `id`=?;");
         $exec_user = $stmt_user->execute(array($result_auth["user_id"]));
 

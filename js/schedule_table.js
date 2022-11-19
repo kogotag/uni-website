@@ -36,7 +36,6 @@ const audioModal = document.getElementById("audioModal");
 const uploadBar = document.getElementById("uploadBar");
 const videoUrlInput = document.getElementById("videoUrlInput");
 const changeDescInfo = document.getElementById("changeDescInfo");
-const hwOnThisDayInput = document.getElementById("hwOnThisDayInput");
 const hwFromThisDayInput = document.getElementById("hwFromThisDayInput");
 const descModal = document.getElementById("descModal");
 
@@ -322,7 +321,7 @@ function changeDesc() {
     day = day.substring(3);
     number = number.substring(6);
 
-    requestWithCsrf("php/changeDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&hwOn=" + hwOnThisDayInput.value + "&hwFrom=" + hwFromThisDayInput.value, function (data) {
+    requestWithCsrf("php/changeDesc.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&hwFrom=" + hwFromThisDayInput.value, function (data) {
         if (data === "success") {
             if (changeDescInfo) {
                 changeDescInfo.innerHTML = "Описание изменено";
