@@ -2,6 +2,7 @@
 
 require_once 'utils.php';
 require_once 'auth.php';
+require_once 'databaseQueries.php';
 
 if (!isLoggedIn()) {
     echo 'Войдите, чтобы отправить сообщение';
@@ -131,14 +132,11 @@ try {
         exit();
     }
 
-    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
-
     $db_file_name = str_replace("/var/www/html", "", $target_file);
-
-    $stmt_add_audio = $dbh->prepare("INSERT INTO `subjects_audios` (`semester`, `week`, `day`, `number`, `user_id`, `url`) VALUES(?, ?, ?, ?, ?, ?);");
-    $exec_add_audio = $stmt_add_audio->execute(array($semester, $week, $day, $number, $_SESSION["user_id"], $db_file_name));
-
-    if ($exec_add_audio) {
+    
+    $add_audio = addAudio($semester, $week, $day, $number, $_SESSION["user_id"], $db_file_name);
+    
+    if ($add_audio) {
         echo "success";
     }
 } catch (Exception $ex) {

@@ -181,3 +181,14 @@ function updateDesc($semester, $week, $day, $class_number, $hw) {
         return "";
     }
 }
+
+function addAudio($semester, $week, $day, $class_number, $user_id, $url){
+    global $dbh;
+
+    $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
+    
+    $stmt_audio = $dbh->prepare("INSERT INTO `subjects_audios` (`schedule_id`, `user_id`, `url`) VALUES(?, ?, ?);");
+    $exec_audio = $stmt_audio->execute(array($result_schedule["id"], $user_id, $url));
+    
+    return $exec_audio;
+}
