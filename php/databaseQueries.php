@@ -1,5 +1,7 @@
 <?php
 
+require_once 'utils.php';
+
 $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
 function getScheduleRowByCoordinates($semester, $week, $day, $class_number) {
@@ -191,4 +193,30 @@ function addAudio($semester, $week, $day, $class_number, $user_id, $url){
     $exec_audio = $stmt_audio->execute(array($result_schedule["id"], $user_id, $url));
     
     return $exec_audio;
+}
+
+function getLastNews(){
+    global $dbh;
+    
+    $stmt_news = $dbh->prepare("SELECT * FROM `news` ORDER BY `timestamp` DESC LIMIT 5;");
+    $exec_news = $stmt_news->execute();
+    
+    if (!$exec_news){
+        return [];
+    }
+    
+    return $stmt_news->fetchAll();
+}
+
+function getNewsFromId($id) {
+    global $dbh;
+    
+    $stmt_news = $dbh->prepare("SELECT * FROM `news` WHERE `id` < ? ORDER BY `timestamp` DESC LIMIT 5;");
+    $exec_news = $stmt_news->execute(array($id));
+    
+    if (!$exec_news){
+        return [];
+    }
+    
+    return $stmt_news->fetchAll();
 }

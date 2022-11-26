@@ -19,8 +19,8 @@
                 <div class="col-10 px-0">
                     <h4 class="mb-4">Новости</h4>
                     <div id="news">
-                        <?php require 'php/getNews.php'; ?>
                     </div>
+                    <div class="btn btn-primary" id="moreNews">Ещё</div>
                 </div>
                 <div class="col-1 pl-0">
                 </div>
@@ -28,5 +28,6 @@
         </div>
         <?php require 'footer.php'; ?>
         <?php require 'php/importImportantJsScripts.php'; ?>
+        <script src="js/index_page_news.js"></script>
     </body>
 </html>
