@@ -20,7 +20,9 @@
                     <h4 class="mb-4">Новости</h4>
                     <div id="news">
                     </div>
-                    <div class="btn btn-primary" id="moreNews">Ещё</div>
+                    <div class="d-flex justify-content-center">
+                        <div class="btn btn-primary mt-2" id="moreNews">Ещё</div>
+                    </div>
                 </div>
                 <div class="col-1 pl-0">
                 </div>
