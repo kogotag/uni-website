@@ -195,6 +195,17 @@ function addAudio($semester, $week, $day, $class_number, $user_id, $url){
     return $exec_audio;
 }
 
+function addComment($semester, $week, $day, $class_number, $user_id, $content){
+    global $dbh;
+
+    $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
+    
+    $stmt_comment = $dbh->prepare("INSERT INTO `subjects_comments` (`schedule_id`, `user_id`, `content`) VALUES (?, ?, ?);");
+    $exec_comment = $stmt_comment->execute(array($result_schedule["id"], $user_id, $content));
+    
+    return $exec_comment;
+}
+
 function getLastNews(){
     global $dbh;
     

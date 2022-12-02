@@ -2,6 +2,7 @@
 
 require_once 'utils.php';
 require_once 'auth.php';
+require_once 'databaseQueries.php';
 
 if (!isLoggedIn()) {
     echo 'Войдите, чтобы отправить сообщение';
@@ -82,12 +83,9 @@ if ($errors) {
 }
 
 try {
-    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
+    $result = addComment($semester, $week, $day, $number, $user_id, $content);
 
-    $stmt_add_comment = $dbh->prepare("INSERT INTO `subjects_comments` (`semester`, `week`, `day`, `number`, `user_id`, `content`) VALUES(?, ?, ?, ?, ?, ?);");
-    $exec_add_comment = $stmt_add_comment->execute(array($semester, $week, $day, $number, $_SESSION["user_id"], $content));
-    
-    if($exec_add_comment){
+    if ($result) {
         echo "success";
     }
 } catch (Exception $ex) {
