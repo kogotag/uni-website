@@ -126,11 +126,38 @@ function getDesc() {
     return "<h5>Домашнее задание на эту пару</h5><p>" . $hwOn . "</p><h5>Домашнее задание, которое задали на этой паре</h5><p>" . $hwFrom . "</p>";
 }
 
+function getAttachments() {
+    global $semester;
+    global $week;
+    global $day;
+    global $number;
+    
+    $result = "";
+
+    $attachments = scheduleGetAttachments($semester, $week, $day, $number);
+
+    foreach ($attachments as $attachment) {
+        $user_name = getUserById($attachment["user_id"]);
+        $split = explode("/", $attachment["url"]);
+        
+        if(count($split) <= 0){
+            return "Ошибка названия файла";
+        }
+        
+        $file_name = $split[count($split)-1];
+        
+        $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил файл: <a href="' . $attachment["url"] . '">' . $file_name . '</a>';
+    }
+
+    return $result;
+}
+
 $response = [];
 
 $response["audios"] = getAudios();
 $response["videos"] = getVideos();
 $response["comments"] = getComments();
 $response["desc"] = getDesc();
+$response["attachments"] = getAttachments();
 
 echo json_encode($response);

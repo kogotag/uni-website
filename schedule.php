@@ -82,9 +82,9 @@
                                 for ($number = 1; $number <= 8; $number++) {
                                     echo '<tr>';
                                     echo '<td>', $semester_times[$semester][$number], '</td>';
-                                    
+
                                     $subjects = getScheduleSubjectWithClassNumberBySemesterAndWeek($semester, $week, $number);
-                                    
+
                                     for ($day = 1; $day <= 6; $day++) {
                                         $subject = $subjects[$day - 1];
                                         echo '<td id="selectableCell" class="day', $day, ' number', $number, '">';
@@ -175,6 +175,30 @@
                                                     </form>
 
                                                     <div class="btn btn-primary mt-2 mr-2" id="sendVideo">
+                                                        Отправить
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn btn-primary mt-2 mr-2" id="openAttachmentModal" data-toggle="modal" data-target="#attachmentModal">
+                                    Добавить вложение
+                                </div>
+                                <div class="modal fade" id="attachmentModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Добавить вложение</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container-fluid px-2">
+                                                    <input type="file" id="attachmentInput">
+                                                    <div class="container-fluid px-0 mt-1">
+                                                        <progress id="uploadBarAttachment" value="0" max="100"></progress>
+                                                    </div>
+                                                    <br>
+                                                    <div class="btn btn-primary mt-2 mr-2" id="sendAttachmentButton">
                                                         Отправить
                                                     </div>
                                                 </div>

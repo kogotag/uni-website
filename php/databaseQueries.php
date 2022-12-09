@@ -45,6 +45,21 @@ function scheduleGetAudios($semester, $week, $day, $class_number) {
     return $stmt_day->fetchAll();
 }
 
+function scheduleGetAttachments($semester, $week, $day, $class_number) {
+    global $dbh;
+
+    $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
+
+    $stmt_day = $dbh->prepare("SELECT * FROM `subjects_attachments` WHERE schedule_id=? ORDER BY `id`;");
+    $exec_day = $stmt_day->execute(array($result_schedule["id"]));
+
+    if (!$exec_day) {
+        return [];
+    }
+
+    return $stmt_day->fetchAll();
+}
+
 function scheduleGetVideos($semester, $week, $day, $class_number) {
     global $dbh;
 
@@ -193,6 +208,17 @@ function addAudio($semester, $week, $day, $class_number, $user_id, $url){
     $exec_audio = $stmt_audio->execute(array($result_schedule["id"], $user_id, $url));
     
     return $exec_audio;
+}
+
+function addAttachment($semester, $week, $day, $class_number, $user_id, $url){
+    global $dbh;
+
+    $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
+    
+    $stmt = $dbh->prepare("INSERT INTO `subjects_attachments` (`schedule_id`, `user_id`, `url`) VALUES(?, ?, ?);");
+    $exec = $stmt->execute(array($result_schedule["id"], $user_id, $url));
+    
+    return $exec;
 }
 
 function addComment($semester, $week, $day, $class_number, $user_id, $content){

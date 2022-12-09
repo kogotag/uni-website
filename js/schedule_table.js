@@ -27,13 +27,21 @@ if (changeDescButton) {
     changeDescButton.addEventListener("click", changeDesc);
 }
 
+const sendAttachmentButton = document.getElementById("sendAttachmentButton");
+
+if (sendAttachmentButton) {
+    sendAttachmentButton.addEventListener("click", sendAttachment);
+}
+
 const sendCommentInfo = document.getElementById("sendCommentInfo");
 const commentTextArea = document.getElementById("commentTextArea");
 const comments = document.getElementById("comments");
 const sendMediaInfo = document.getElementById("sendMediaInfo");
 const audioInput = document.getElementById("audioInput");
+const attachmentInput = document.getElementById("attachmentInput");
 const audioModal = document.getElementById("audioModal");
 const uploadBar = document.getElementById("uploadBar");
+const uploadBarAttachment = document.getElementById("uploadBarAttachment");
 const videoUrlInput = document.getElementById("videoUrlInput");
 const changeDescInfo = document.getElementById("changeDescInfo");
 const hwFromThisDayInput = document.getElementById("hwFromThisDayInput");
@@ -119,7 +127,7 @@ function updateScheduleContent(semester, week, day, number){
             data = JSON.parse(data);
             document.getElementById("description").innerHTML = data["desc"];
             document.getElementById("comments").innerHTML = data["comments"];
-            document.getElementById("media").innerHTML = data["videos"] + data["audios"];
+            document.getElementById("media").innerHTML = data["videos"] + data["audios"] + data["attachments"];
         } catch (e) {
             console.log("scheduleGetContent.php returned not json: " + data);
         }
@@ -331,6 +339,65 @@ function changeDesc() {
         } else {
             if (changeDescInfo) {
                 changeDescInfo.innerHTML = data;
+            }
+        }
+    });
+}
+
+function sendAttachment() {
+    if (!selectedCell) {
+        if (sendMediaInfo) {
+            sendMediaInfo.innerHTML = "Выберите ячейку";
+        }
+        return;
+    } else {
+        sendMediaInfo.innerHTML = "";
+    }
+
+    if (!attachmentInput || attachmentInput.files.length < 1) {
+        if (sendMediaInfo) {
+            sendMediaInfo.innerHTML = "Выберите файл";
+        }
+        return;
+    } else {
+        sendMediaInfo.innerHTML = "";
+    }
+
+    let day = selectedCell.classList[0];
+    let number = selectedCell.classList[1];
+
+    if (!semester || !week || !day || !number) {
+        console.log("vseploha");
+        return;
+    }
+
+    day = day.substring(3);
+    number = number.substring(6);
+
+    let data = new FormData();
+    data.append('semester', semester);
+    data.append("week", week);
+    data.append("day", day);
+    data.append("number", number);
+    data.append("content", attachmentInput.files[0]);
+
+    requestForm("php/sendAttachment.php", data, function (data) {
+        if (data === "success") {
+            if (sendMediaInfo) {
+                sendMediaInfo.innerHTML = "Вложение отправлено";
+            }
+
+            updateScheduleContent(semester, week, day, number);
+        } else {
+            if (sendMediaInfo) {
+                sendMediaInfo.innerHTML = data;
+            }
+        }
+    }, function (progressEvent) {
+        if (progressEvent.lengthComputable) {
+            const percentCompleted = Math.floor(progressEvent.loaded / progressEvent.total * 100);
+            if (uploadBarAttachment) {
+                uploadBarAttachment.setAttribute("value", percentCompleted);
             }
         }
     });
