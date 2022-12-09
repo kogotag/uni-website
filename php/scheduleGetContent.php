@@ -146,7 +146,7 @@ function getAttachments() {
         
         $file_name = $split[count($split)-1];
         
-        $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил файл: <a href="' . $attachment["url"] . '">' . $file_name . '</a>';
+        $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил файл: <a href="' . $attachment["url"] . '">' . $file_name . '</a><br>';
     }
 
     return $result;

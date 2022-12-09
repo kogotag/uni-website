@@ -133,6 +133,7 @@
                             <?php endif; ?>
                             <div id="description" class="my-2"></div>
                             <h2 class="mt-2">Медиа</h2>
+                            <div id="media" class="my-2"></div>
                             <div id="sendMediaInfo"></div>
                             <?php if ($_SESSION["user_admin_rank"] === 1): ?>
                                 <div class="btn btn-primary mt-2 mr-2" id="openAudioModal" data-toggle="modal" data-target="#audioModal">
@@ -207,7 +208,6 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
-                            <div id="media" class="my-2"></div>
                             <h2 class="mt-2">Комментарии</h2>
                             <div id="sendCommentInfo"></div>
                             <div class="row">
