@@ -63,8 +63,8 @@ try {
     $stmt_add_attempt = $dbh->prepare("INSERT INTO `login_attempts` (`ip`) VALUES(?);");
     $exec_add_attempt = $stmt_add_attempt->execute(array($ip));
 
-    $stmt_check_user = $dbh->prepare("SELECT * FROM `users` WHERE `login`=?;");
-    $exec_check_user = $stmt_check_user->execute(array($login));
+    $stmt_check_user = $dbh->prepare("SELECT * FROM `users` WHERE `login`=? OR `email`=?;");
+    $exec_check_user = $stmt_check_user->execute(array($login, $login));
 
     if (!$exec_check_user) {
         echo '<p>Ошибка подключения к БД</p>';

@@ -46,6 +46,7 @@
 
         <?php require 'footer.php'; ?>
         <script src="js/mainscript.js"></script>
+        <script src="js/signin_page_script.js"></script>
         <?php require 'php/importImportantJsScripts.php'; ?>
     </body>
 </html>
