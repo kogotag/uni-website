@@ -1,8 +1,6 @@
 <?php
 
 require_once 'russianDateFormatter.php';
-
-$SM_studying_beginning_year = 2022;
 $SM_semesters_count = 8;
 
 //manually created semester dates data
