@@ -2,6 +2,7 @@
 <?php require_once 'php/auth.php'; ?>
 <?php require_once 'php/databaseQueries.php'; ?>
 <?php require_once 'php/semesterTime.php'; ?>
+<?php require_once 'php/semesterDates.php'; ?>
 <html>
     <head>
         <meta charset="utf-8">
@@ -22,21 +23,25 @@
         </nav>
         <?php
         try {
-            $date_now = new DateTime();
-            $semester_auto = intval($date_now->format("Y")) - 2021;
-            $semester_start = DateTime::createFromFormat("d.m.Y", "01.09." . ($semester_auto + 2021));
-            $first_september_weekday = $semester_start->format("N");
-            $date_first_monday = $semester_start->modify("-" . $first_september_weekday - 1 . " days");
-            $difference_weeks = floor($date_now->diff($date_first_monday)->days / 7) + 1;
-
+            //TODO: clean this garbage later and refactor
+//            $date_now = new DateTime();
+//            $semester_auto = intval($date_now->format("Y")) - 2021;
+//            $semester_start = DateTime::createFromFormat("d.m.Y", "01.09." . ($semester_auto + 2021));
+//            $first_september_weekday = $semester_start->format("N");
+//            $date_first_monday = $semester_start->modify("-" . $first_september_weekday - 1 . " days");
+//            $difference_weeks = floor($date_now->diff($date_first_monday)->days / 7) + 1;
+            
+            //TODO: refactor
             $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
             if (!filter_input_array(INPUT_GET)) {
-                header("Location: ?semester=" . $semester_auto . "&week=" . $difference_weeks);
+                //trychange: $semester_auto -> $SM_current_semester
+                //$difference_weeks -> getWeeksFromSemesterStart($SM_current_semester)
+                header("Location: ?semester=" . $SM_current_semester . "&week=" . getWeeksFromSemesterStart($SM_current_semester));
             } else {
                 if (filter_input(INPUT_GET, "semester") && filter_input(INPUT_GET, "week")) {
                     $semester = htmlspecialchars(filter_input(INPUT_GET, "semester"));
                     $week = htmlspecialchars(filter_input(INPUT_GET, "week"));
-                    $date_current_week_monday = $date_first_monday->modify("+" . $week - 1 . " weeks");
+                    $date_current_week_monday = getSemesterFirstMonday($semester)->modify("+" . $week - 1 . " weeks");
                     $date_weekday_iterator = clone $date_current_week_monday;
                     ?>
                     <div class="container-fluid">
