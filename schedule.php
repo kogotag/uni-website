@@ -30,7 +30,6 @@
 //            $first_september_weekday = $semester_start->format("N");
 //            $date_first_monday = $semester_start->modify("-" . $first_september_weekday - 1 . " days");
 //            $difference_weeks = floor($date_now->diff($date_first_monday)->days / 7) + 1;
-            
             //TODO: refactor
             $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
             if (!filter_input_array(INPUT_GET)) {
@@ -47,7 +46,12 @@
                     <div class="container-fluid">
                         <div class="d-flex mx-2 justify-content-between">
                             <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week - 1 > 0 ? $week - 1 : 1; ?>"><h3>&lt;</h3></a>
-                            <span><h3>Неделя <?php echo $week; ?></h3></span>
+                            <span class="d-flex flex-column align-items-center">
+                                <h3 class="my-0">Неделя <?php echo $week; ?></h3>
+                                <?php if (intval($semester) === intval($SM_current_semester) && intval($week) === intval(getWeeksFromSemesterStart($SM_current_semester))) : ?>
+                                    <h5>Текущая неделя</h5>
+                                <?php endif; ?>
+                            </span>
                             <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week + 1; ?>"><h3>&gt;</h3></a>
                         </div>
                     </div>
