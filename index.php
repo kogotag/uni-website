@@ -1,5 +1,6 @@
 <?php require_once 'php/utils.php'; ?>
 <?php require_once 'php/auth.php'; ?>
+<?php require_once 'php/semesterDates.php'; ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,6 +18,7 @@
                 <div class="col-1 pr-0">
                 </div>
                 <div class="col-10 px-0">
+                    <h6>Семестр <?php echo $SM_current_semester;?>, Неделя <?php echo getWeeksFromSemesterStart($SM_current_semester); ?></h6>
                     <h4 class="mb-4">Новости</h4>
                     <div id="news">
                     </div>
