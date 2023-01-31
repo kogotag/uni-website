@@ -88,7 +88,15 @@ if ($errors) {
 }
 
 try {
-    $upload_dir = "/var/www/html/media/semester" . $semester . "/";
+    $schedule_row = getScheduleRowByCoordinates($semester, $week, $day, $number);
+    $subject_id = $schedule_row["subject_id"];
+    
+    $upload_dir = "/var/www/html/media/semester" . $semester . "/" . $subject_id . "/";
+    
+    if (!file_exists($upload_dir)) {
+        mkdir($upload_dir, 0755);
+    }
+    
     $file_full_name = htmlspecialchars($content["name"]);
 
     if (str_contains($file_full_name, "/")) {

@@ -166,6 +166,12 @@ function getSubjectAliasNameBySubjectNameId($subject_name_id) {
     return $result;
 }
 
+function getSubjectAliasNameByScheduleCoordinates($semester, $week, $day, $class_number) {
+    $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
+    
+    return getSubjectAliasNameBySubjectNameId($result_schedule["subject_id"]);
+}
+
 function addDescChange($semester, $week, $day, $class_number, $user_id, $hw_old, $hw_new) {
     global $dbh;
 
