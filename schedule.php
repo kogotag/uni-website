@@ -3,6 +3,7 @@
 <?php require_once 'php/databaseQueries.php'; ?>
 <?php require_once 'php/semesterTime.php'; ?>
 <?php require_once 'php/semesterDates.php'; ?>
+<?php require_once 'php/logPageVisit.php'; ?>
 <html>
     <head>
         <meta charset="utf-8">

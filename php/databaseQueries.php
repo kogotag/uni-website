@@ -263,3 +263,21 @@ function getNewsFromId($id) {
     
     return $stmt_news->fetchAll();
 }
+
+function logUser($user_id, $url, $user_ip) {
+    global $dbh;
+    
+    $stmt_log = $dbh->prepare("INSERT INTO `user_visits` (`user_id`, `url`, `ip`) VALUES (?, ?, ?);");
+    $exec_log = $stmt_log->execute(array($user_id, $url, $user_ip));
+    
+    return $exec_log;
+}
+
+function logGuest($url, $guest_ip) {
+    global $dbh;
+    
+    $stmt_log = $dbh->prepare("INSERT INTO `guest_visits` (`url`, `ip`) VALUES (?, ?);");
+    $exec_log = $stmt_log->execute(array($url, $guest_ip));
+    
+    return $exec_log;
+}

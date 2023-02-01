@@ -1,5 +1,6 @@
 <?php require_once 'php/utils.php'; ?>
 <?php require_once 'php/auth.php'; ?>
+<?php require_once 'php/logPageVisit.php'; ?>
 <!DOCTYPE html>
 <html>
     <head>
