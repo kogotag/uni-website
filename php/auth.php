@@ -5,9 +5,12 @@ require_once 'utils.php';
 try {
     $user_id = $_SESSION["user_id"];
     $cookie_remember = filter_input(INPUT_COOKIE, "remember");
+    
+    //TODO: may be check if cookie is empty separately? this may invoke error (?)
     if (empty($user_id) && !empty($cookie_remember)) {
         list($selector, $authenticator) = explode(':', $cookie_remember);
-
+        
+        //TODO: move to databaseQueries.php
         $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
         $stmt_auth = $dbh->prepare("SELECT * FROM `authorization` WHERE `selector`=?;");

@@ -34,14 +34,24 @@ $SM_day = $SM_date_now->diff($SM_date_first_monday)->days - ($SM_week - 1) * 7 +
 
 function getWeeksFromSemesterStart($semester) {
     global $SM_date_now;
-    
+
     return floor($SM_date_now->diff(getSemesterFirstMonday($semester))->days / 7) + 1;
 }
 
 function getSemesterFirstMonday($semester) {
     global $SM_date_semester_list;
-    
+
     $semester_start = clone $SM_date_semester_list[$semester];
     $first_day_weekday = $semester_start->format("N");
     return $semester_start->modify("-" . $first_day_weekday - 1 . " days");
+}
+
+function getSemesterWeeksCount($semester) {
+    global $SM_date_semester_list;
+
+    if (!$SM_date_semester_list[$semester + 1]) {
+        return 30;
+    }
+
+    return ceil($SM_date_semester_list[$semester + 1]->diff($SM_date_semester_list[$semester])->days / 7);
 }

@@ -40,20 +40,64 @@
             } else {
                 if (filter_input(INPUT_GET, "semester") && filter_input(INPUT_GET, "week")) {
                     $semester = htmlspecialchars(filter_input(INPUT_GET, "semester"));
+                    
+                    if ($semester > count($SM_date_semester_list)) {
+                        header("Location: /errorPage.php?message=semesterRange");
+                    }
+                    
                     $week = htmlspecialchars(filter_input(INPUT_GET, "week"));
                     $date_current_week_monday = getSemesterFirstMonday($semester)->modify("+" . $week - 1 . " weeks");
                     $date_weekday_iterator = clone $date_current_week_monday;
                     ?>
                     <div class="container-fluid">
-                        <div class="d-flex mx-2 justify-content-between">
-                            <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week - 1 > 0 ? $week - 1 : 1; ?>"><h3>&lt;</h3></a>
-                            <span class="d-flex flex-column align-items-center">
-                                <h3 class="my-0">Неделя <?php echo $week; ?></h3>
+                        <div class="d-flex mx-2 justify-content-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="d-flex">
+                                    <div class="dropdown">
+                                        <button class="btn btn-lg dropdown-toggle font-weight-bold px-1 py-1" type="button" id="dropdown-semester" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Семестр <?php echo $semester; ?>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown-semester">
+                                            <?php
+                                            for ($i = 1; $i <= $SM_semesters_count; $i++) {
+                                                echo "<li><a class=\"dropdown-item";
+
+                                                if ($i === intval($semester)) {
+                                                    echo " active";
+                                                }
+
+                                                if ($i > count($SM_date_semester_list)) {
+                                                    echo " disabled";
+                                                }
+
+                                                echo "\" href=\"/schedule.php?semester=" . $i . "&week=1\">Семестр " . $i . "</a></li>\n";
+                                            }
+                                            ?>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-lg dropdown-toggle font-weight-bold px-1 py-1" type="button" id="dropdown-week" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Неделя <?php echo $week; ?>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown-week">
+                                            <?php
+                                            for ($i = 1; $i <= getSemesterWeeksCount($semester); $i++) {
+                                                echo "<li><a class=\"dropdown-item";
+
+                                                if ($i === intval($week)) {
+                                                    echo " active";
+                                                }
+
+                                                echo "\" href=\"/schedule.php?semester=" . $semester . "&week=" . $i . "\">Неделя " . $i . "</a></li>\n";
+                                            }
+                                            ?>
+                                        </ul>
+                                    </div>
+                                </div>
                                 <?php if (intval($semester) === intval($SM_current_semester) && intval($week) === intval(getWeeksFromSemesterStart($SM_current_semester))) : ?>
                                     <h5>Текущая неделя</h5>
                                 <?php endif; ?>
-                            </span>
-                            <a href="/schedule.php?semester=<?php echo $semester; ?>&week=<?php echo $week + 1; ?>"><h3>&gt;</h3></a>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive">
