@@ -9,7 +9,7 @@ if (!isLoggedIn()) {
     exit();
 }
 
-if ($_SESSION["user_from_group"] !== 1) {
+if ($_SESSION["user_from_group"] != 1) {
     echo 'Только студенты нашей группы могут отправлять сообщения';
     exit();
 }

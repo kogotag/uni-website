@@ -30,8 +30,13 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <?php if (isLoggedIn()): ?>
-                    <li class="nav-item mr-2">
-                        <span class="text-white navbar-text"><?php echo $_SESSION["user_name"]; ?></span>
+                    <li class="nav-item dropdown mr-2">
+                        <a class="text-white nav-link dropdown-toggle" href="" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <?php echo $_SESSION["user_name"]; ?>
+                        </a>
+                        <div class="dropdown-menu bg-primary">
+                            <a class="nav-link text-light" href="/personal.php">Личный кабинет</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light" href="/logout.php">Выход</a>

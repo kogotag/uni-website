@@ -30,3 +30,11 @@ function urlSafeEncode($m) {
 function urlSafeDecode($m) {
     return base64_decode(strtr($m, '-_', '+/'));
 }
+
+function replaceNewLineWithHtmlTag($text) {
+    if ($text == null || !$text || empty($text)) {
+        return "";
+    }
+    
+    return str_replace("\n", "<br>", $text);
+}

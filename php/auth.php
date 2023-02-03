@@ -41,8 +41,8 @@ try {
             $_SESSION["user_email"] = $user["email"];
             $_SESSION["user_login"] = $user["login"];
             $_SESSION["user_verified"] = $user["email_verified"];
-            $_SESSION["user_from_group"] = $user["is_from_group"];
-            $_SESSION["user_admin_rank"] = $user["admin_rank"];
+            $_SESSION["user_from_group"] = intval($user["is_from_group"]);
+            $_SESSION["user_admin_rank"] = intval($user["admin_rank"]);
             $_SESSION["user_auth_selector"] = $selector;
         }
     }

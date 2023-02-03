@@ -155,9 +155,9 @@
                         <a href="https://ssau.ru/rasp?groupId=531233720&selectedWeek=<?php echo $week; ?>&selectedWeekday=1">ssau.ru расписание на эту неделю</a>
                         <p class="text-danger mb-0">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</p>
                         <p class="text-muted mb-0">Выберите предмет, чтобы получить информацию</p>
-                        <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
+                        <?php if (isLoggedIn() && $_SESSION["user_from_group"] == 1): ?>
                             <h2 class="mt-2">Описание</h2>
-                            <?php if ($_SESSION["user_admin_rank"] === 1): ?>
+                            <?php if ($_SESSION["user_admin_rank"] == 1): ?>
                                 <div class="btn btn-primary mt-2 mr-2" id="openDescModal" data-toggle="modal" data-target="#descModal">
                                     Изменить описание
                                 </div>
@@ -189,7 +189,7 @@
                             <h2 class="mt-2">Медиа</h2>
                             <div id="media" class="my-2"></div>
                             <div id="sendMediaInfo"></div>
-                            <?php if ($_SESSION["user_admin_rank"] === 1): ?>
+                            <?php if ($_SESSION["user_admin_rank"] == 1): ?>
                                 <div class="btn btn-primary mt-2 mr-2" id="openAudioModal" data-toggle="modal" data-target="#audioModal">
                                     Добавить аудио
                                 </div>

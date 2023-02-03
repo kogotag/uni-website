@@ -238,6 +238,15 @@ function addComment($semester, $week, $day, $class_number, $user_id, $content){
     return $exec_comment;
 }
 
+function sendNews($user_id, $content, $heading){
+    global $dbh;
+    
+    $stmt_news = $dbh->prepare("INSERT INTO `news` (`user_id`, `content`, `heading`) VALUES (?, ?, ?);");
+    $exec_news = $stmt_news->execute(array($user_id, $content, $heading));
+    
+    return $exec_news;
+}
+
 function getLastNews(){
     global $dbh;
     
