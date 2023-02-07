@@ -200,6 +200,10 @@
                                         <div class="modal-body">
                                             <div class="container-fluid">
                                                 <div class="dropdown mb-2">
+                                                    <p>
+                                                        Предмет
+                                                    </p>
+                                                    <p id="subjectAddSubjectDropDown">&lt;Не выбрано&gt;</p>
                                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                                         Выберите тип предмета
                                                     </button>

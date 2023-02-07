@@ -62,6 +62,7 @@ const descModal = document.getElementById("descModal");
 const addSubjectDropdown = document.getElementById("addSubjectDropdown");
 const inputAddSubjectLecturer = document.getElementById("inputAddSubjectLecturer");
 const inputAddSubjectRoom = document.getElementById("inputAddSubjectRoom");
+const subjectAddSubjectDropDown = document.getElementById("subjectAddSubjectDropDown");
 
 function isJsonObject(strData) {
     try {
@@ -488,21 +489,9 @@ function selectSubjectDropdownItem() {
     if (selectedSubject) {
         selectedSubject.classList.remove("active");
     }
-    
+
     event.target.classList.add("active");
     selectedSubject = event.target;
-}
-
-function addSubject() {
-    if (!selectedSubject) {
-        alert("Сначала выберите предмет, который вы хотите добавить");
-        return;
-    }
-    
-    if (!selectedCell) {
-        alert("Выберите ячейку в таблице с расписанием");
-        return;
-    }
     
     let subject_id = selectedSubject.classList[1];
 
@@ -511,7 +500,39 @@ function addSubject() {
     }
 
     subject_id = subject_id.substring(("subject").length);
-    
+
+    requestWithCsrf("php/getSubjectTypeById.php", "subject_id=" + subject_id, function (data) {
+        if (isJsonObject(data)) {
+            let subjectType = JSON.parse(data);
+            
+            subjectAddSubjectDropDown.innerHTML = subjectType["aliasName"];
+        } else if (typeof data === "string") {
+            alert(data);
+        } else {
+            alert("Ошибка. Тип возвращаемого значения не установлен");
+        }
+    });
+}
+
+function addSubject() {
+    if (!selectedSubject) {
+        alert("Сначала выберите предмет, который вы хотите добавить");
+        return;
+    }
+
+    if (!selectedCell) {
+        alert("Выберите ячейку в таблице с расписанием");
+        return;
+    }
+
+    let subject_id = selectedSubject.classList[1];
+
+    if (!subject_id) {
+        return;
+    }
+
+    subject_id = subject_id.substring(("subject").length);
+
     let day = selectedCell.classList[0];
     let number = selectedCell.classList[1];
 
@@ -522,18 +543,18 @@ function addSubject() {
 
     day = day.substring(3);
     number = number.substring(6);
-    
+
     if (inputAddSubjectLecturer.value.trim() === "") {
         alert("Введите имя лектора");
         return;
     }
-    
+
     if (inputAddSubjectRoom.value.trim() === "") {
         alert("Введите название аудитории");
         return;
     }
-    
-    requestWithCsrf("php/addSubject.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&subject_id=" + subject_id + "&lecturer=" + inputAddSubjectLecturer.value + "&room=" + inputAddSubjectRoom.value, function(data){
+
+    requestWithCsrf("php/addSubject.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&subject_id=" + subject_id + "&lecturer=" + inputAddSubjectLecturer.value + "&room=" + inputAddSubjectRoom.value, function (data) {
         if (data === "success") {
             alert("Предмет был добавлен. Обновите страницу");
         } else {
