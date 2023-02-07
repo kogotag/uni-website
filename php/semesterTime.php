@@ -21,3 +21,23 @@ $semester_times = array(
         7 => "18:45<br>20:15",
         8 => "20:25<br>21:55"
     ));
+
+function semesterTimeGetStart($time) {
+    $split = explode("<br>", $time);
+    
+    if (empty($split) || count($split) < 2) {
+        return "";
+    }
+    
+    return $split[0];
+}
+
+function semesterTimeGetEnd($time) {
+    $split = explode("<br>", $time);
+    
+    if (empty($split) || count($split) < 2) {
+        return "";
+    }
+    
+    return $split[1];
+}

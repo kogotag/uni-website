@@ -1,6 +1,7 @@
 <?php
 
 require_once 'utils.php';
+require_once 'semesterTime.php';
 
 $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
@@ -151,6 +152,7 @@ function getScheduleSubjectWithClassNumberBySemesterAndWeek($semester, $week, $c
     return $schedule_row;
 }
 
+//TODO: REFACTOR THESE TWO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function getSubjectAliasNameBySubjectNameId($subject_name_id) {
     global $dbh;
 
@@ -166,9 +168,22 @@ function getSubjectAliasNameBySubjectNameId($subject_name_id) {
     return $result;
 }
 
+function getSubjectTypeBySubjectId($subject_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT `aliasName` FROM `subjects_aliases` WHERE id=? LIMIT 1;");
+    $exec = $stmt->execute(array($subject_id));
+
+    if (!$exec) {
+        return [];
+    }
+    
+    return $stmt->fetch();
+}
+
 function getSubjectAliasNameByScheduleCoordinates($semester, $week, $day, $class_number) {
     $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
-    
+
     return getSubjectAliasNameBySubjectNameId($result_schedule["subject_id"]);
 }
 
@@ -205,88 +220,178 @@ function updateDesc($semester, $week, $day, $class_number, $hw) {
     }
 }
 
-function addAudio($semester, $week, $day, $class_number, $user_id, $url){
+function addAudio($semester, $week, $day, $class_number, $user_id, $url) {
     global $dbh;
 
     $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
-    
+
     $stmt_audio = $dbh->prepare("INSERT INTO `subjects_audios` (`schedule_id`, `user_id`, `url`) VALUES(?, ?, ?);");
     $exec_audio = $stmt_audio->execute(array($result_schedule["id"], $user_id, $url));
-    
+
     return $exec_audio;
 }
 
-function addAttachment($semester, $week, $day, $class_number, $user_id, $url){
+function addAttachment($semester, $week, $day, $class_number, $user_id, $url) {
     global $dbh;
 
     $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
-    
+
     $stmt = $dbh->prepare("INSERT INTO `subjects_attachments` (`schedule_id`, `user_id`, `url`) VALUES(?, ?, ?);");
     $exec = $stmt->execute(array($result_schedule["id"], $user_id, $url));
-    
+
     return $exec;
 }
 
-function addComment($semester, $week, $day, $class_number, $user_id, $content){
+function addComment($semester, $week, $day, $class_number, $user_id, $content) {
     global $dbh;
 
     $result_schedule = getScheduleRowByCoordinates($semester, $week, $day, $class_number);
-    
+
     $stmt_comment = $dbh->prepare("INSERT INTO `subjects_comments` (`schedule_id`, `user_id`, `content`) VALUES (?, ?, ?);");
     $exec_comment = $stmt_comment->execute(array($result_schedule["id"], $user_id, $content));
-    
+
     return $exec_comment;
 }
 
-function sendNews($user_id, $content, $heading){
+function sendNews($user_id, $content, $heading) {
     global $dbh;
-    
+
     $stmt_news = $dbh->prepare("INSERT INTO `news` (`user_id`, `content`, `heading`) VALUES (?, ?, ?);");
     $exec_news = $stmt_news->execute(array($user_id, $content, $heading));
-    
+
     return $exec_news;
 }
 
-function getLastNews(){
+function getLastNews() {
     global $dbh;
-    
+
     $stmt_news = $dbh->prepare("SELECT * FROM `news` ORDER BY `timestamp` DESC LIMIT 5;");
     $exec_news = $stmt_news->execute();
-    
-    if (!$exec_news){
+
+    if (!$exec_news) {
         return [];
     }
-    
+
     return $stmt_news->fetchAll();
 }
 
 function getNewsFromId($id) {
     global $dbh;
-    
+
     $stmt_news = $dbh->prepare("SELECT * FROM `news` WHERE `id` < ? ORDER BY `timestamp` DESC LIMIT 5;");
     $exec_news = $stmt_news->execute(array($id));
-    
-    if (!$exec_news){
+
+    if (!$exec_news) {
         return [];
     }
-    
+
     return $stmt_news->fetchAll();
 }
 
 function logUser($user_id, $url, $user_ip) {
     global $dbh;
-    
+
     $stmt_log = $dbh->prepare("INSERT INTO `user_visits` (`user_id`, `url`, `ip`) VALUES (?, ?, ?);");
     $exec_log = $stmt_log->execute(array($user_id, $url, $user_ip));
-    
+
     return $exec_log;
 }
 
 function logGuest($url, $guest_ip) {
     global $dbh;
-    
+
     $stmt_log = $dbh->prepare("INSERT INTO `guest_visits` (`url`, `ip`) VALUES (?, ?);");
     $exec_log = $stmt_log->execute(array($url, $guest_ip));
-    
+
     return $exec_log;
+}
+
+function decreaseNumberOfNextSubjects($subject_id, $number) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `ssau_schedule` SET number = number - 1 WHERE subject_id=? AND number>?;");
+    $exec = $stmt->execute(array($subject_id, $number));
+
+    return $exec;
+}
+
+function deleteSubjectByRowId($row_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("DELETE FROM `ssau_schedule` WHERE id=?;");
+    $exec = $stmt->execute(array($row_id));
+
+    return $exec;
+}
+
+function getSubjectsListBySemester($semester) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `subjects_aliases` WHERE semester=? ORDER BY id ASC;");
+    $exec = $stmt->execute(array($semester));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function incrementSubjectsNumberAfterCoordinate($semester, $week, $day, $class_number, $subject_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `ssau_schedule` SET number = number + 1 WHERE subject_id=? AND semester=? AND (week>? OR (week=? AND day>?) OR (week=? AND day=? AND class_number>?));");
+    $exec = $stmt->execute(array($subject_id, $semester, $week, $week, $day, $week, $day, $class_number));
+
+    return $exec;
+}
+
+function getLastSubjectNumberBeforeCoordinate($semester, $week, $day, $class_number, $subject_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT MAX(number) FROM `ssau_schedule` WHERE subject_id=? AND semester=? AND (week<? OR (week=? AND day<?) OR (week=? AND day=? AND class_number<?));");
+    $exec = $stmt->execute(array($subject_id, $semester, $week, $week, $day, $week, $day, $class_number));
+    
+    if (!$exec) {
+        return 0;
+    }
+    
+    $result = $stmt->fetch();
+    
+    if (empty($result)) {
+        return 0;
+    }
+    
+    return $result[0];
+}
+
+function insertSubjectByCoordinatesAndType($semester, $week, $day, $class_number, $subject_id, $lecturer, $room) {
+    global $dbh;
+    global $semester_times;
+    
+    $last_number = getLastSubjectNumberBeforeCoordinate($semester, $week, $day, $class_number, $subject_id);
+    
+    if ($last_number === "NULL") {
+        $last_number = 0;
+    }
+
+    $stmt = $dbh->prepare("INSERT INTO `ssau_schedule` (`subject_id`, `number`, `semester`, `week`, `day`, `class_number`, `time_start`, `time_end`, `lecturer`, `room`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+    $exec = $stmt->execute(array($subject_id, intval($last_number)+1, $semester, $week, $day, $class_number, semesterTimeGetStart($semester_times[$semester][$class_number]), semesterTimeGetEnd($semester_times[$semester][$class_number]), $lecturer, $room));
+    
+    return $exec;
+}
+
+function checkIfCellFilled($semester, $week, $day, $class_number) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `ssau_schedule` WHERE semester=? AND week=? AND day=? AND class_number=?;");
+    $exec = $stmt->execute(array($semester, $week, $day, $class_number));
+
+    if (!$exec) {
+        return false;
+    }
+
+    $result = $stmt->fetch();
+
+    return !empty($result);
 }

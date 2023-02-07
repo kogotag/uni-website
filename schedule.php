@@ -40,11 +40,11 @@
             } else {
                 if (filter_input(INPUT_GET, "semester") && filter_input(INPUT_GET, "week")) {
                     $semester = htmlspecialchars(filter_input(INPUT_GET, "semester"));
-                    
+
                     if ($semester > count($SM_date_semester_list)) {
                         header("Location: /errorPage.php?message=semesterRange");
                     }
-                    
+
                     $week = htmlspecialchars(filter_input(INPUT_GET, "week"));
                     $date_current_week_monday = getSemesterFirstMonday($semester)->modify("+" . $week - 1 . " weeks");
                     $date_weekday_iterator = clone $date_current_week_monday;
@@ -156,6 +156,69 @@
                         <p class="text-danger mb-0">Внимание! В настоящий момент расписание обновляется вручную! Смотрите актуальное расписание на сайте университета, а здесь записи занятий.</p>
                         <p class="text-muted mb-0">Выберите предмет, чтобы получить информацию</p>
                         <?php if (isLoggedIn() && $_SESSION["user_from_group"] == 1): ?>
+                            <!-- separate admin section -->
+                            <?php if ($_SESSION["user_admin_rank"] == 1): ?>
+                                <h2 class="mt-2">Администрирование</h2>
+                                <!-- Delete -->
+                                <div class="btn btn-primary mt-2 mr-2" id="openDeleteModal" data-toggle="modal" data-target="#deleteModal">
+                                    Удалить
+                                </div>
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    Удаление предмета из расписания
+                                                </h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <p>
+                                                        Вы уверены?
+                                                    </p>
+                                                    <div class="btn btn-primary" id="deleteSubjectButton">
+                                                        Да
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <!-- Add -->
+                            <div class="btn btn-primary mt-2 mr-2" id="openAddSubjectModal" data-toggle="modal" data-target="#addSubjectModal">
+                                Добавить
+                            </div>
+                            <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Добавить предмет в расписание
+                                            </h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container-fluid">
+                                                <div class="dropdown mb-2">
+                                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                        Выберите тип предмета
+                                                    </button>
+                                                    <div class="dropdown-menu" id="addSubjectDropdown">
+                                                    </div>
+                                                </div>
+                                                <label for="inputAddSubjectLecturer">Преподаватель</label>
+                                                <input type="text" class="form-control" id="inputAddSubjectLecturer">
+                                                <label for="inputAddSubjectRoom">Аудитория</label>
+                                                <input type="text" class="form-control mb-2" id="inputAddSubjectRoom">
+                                                <div class="btn btn-primary" id="addSubjectButton">
+                                                    Добавить
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- -->
                             <h2 class="mt-2">Описание</h2>
                             <?php if ($_SESSION["user_admin_rank"] == 1): ?>
                                 <div class="btn btn-primary mt-2 mr-2" id="openDescModal" data-toggle="modal" data-target="#descModal">

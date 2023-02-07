@@ -1,4 +1,5 @@
 let selectedCell;
+let selectedSubject;
 document.querySelectorAll("#selectableCell").forEach(cell => {
     cell.addEventListener("click", selectCell);
 });
@@ -33,6 +34,18 @@ if (sendAttachmentButton) {
     sendAttachmentButton.addEventListener("click", sendAttachment);
 }
 
+const deleteSubjectButton = document.getElementById("deleteSubjectButton");
+
+if (deleteSubjectButton) {
+    deleteSubjectButton.addEventListener("click", deleteSubject);
+}
+
+const addSubjectButton = document.getElementById("addSubjectButton");
+
+if (addSubjectButton) {
+    addSubjectButton.addEventListener("click", addSubject);
+}
+
 const sendCommentInfo = document.getElementById("sendCommentInfo");
 const commentTextArea = document.getElementById("commentTextArea");
 const comments = document.getElementById("comments");
@@ -46,6 +59,18 @@ const videoUrlInput = document.getElementById("videoUrlInput");
 const changeDescInfo = document.getElementById("changeDescInfo");
 const hwFromThisDayInput = document.getElementById("hwFromThisDayInput");
 const descModal = document.getElementById("descModal");
+const addSubjectDropdown = document.getElementById("addSubjectDropdown");
+const inputAddSubjectLecturer = document.getElementById("inputAddSubjectLecturer");
+const inputAddSubjectRoom = document.getElementById("inputAddSubjectRoom");
+
+function isJsonObject(strData) {
+    try {
+        JSON.parse(strData);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
 
 function findGetParameter(parameterName) {
     var result = null,
@@ -63,6 +88,7 @@ function findGetParameter(parameterName) {
 
 const semester = findGetParameter("semester");
 const week = findGetParameter("week");
+fillAddSubjectDropdown();
 
 function request(url, data, callback) {
     const xhr = new XMLHttpRequest();
@@ -121,7 +147,7 @@ function requestForm(url, data, onload_callback, onprogress_callback = undefined
     xhr.send(formData);
 }
 
-function updateScheduleContent(semester, week, day, number){
+function updateScheduleContent(semester, week, day, number) {
     request("/php/scheduleGetContent.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
         try {
             data = JSON.parse(data);
@@ -399,6 +425,119 @@ function sendAttachment() {
             if (uploadBarAttachment) {
                 uploadBarAttachment.setAttribute("value", percentCompleted);
             }
+        }
+    });
+}
+
+function deleteSubject() {
+    if (!selectedCell) {
+        alert("Выберите ячейку");
+        return;
+    }
+
+    let day = selectedCell.classList[0];
+    let number = selectedCell.classList[1];
+
+    if (!semester || !week || !day || !number) {
+        alert("Ошибка: координаты ячейки расписания не определены");
+        return;
+    }
+
+    //TODO: move it to separate function
+    day = day.substring(3);
+    number = number.substring(6);
+
+    requestWithCsrf("php/deleteSubject.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number, function (data) {
+        if (data === "success") {
+            alert("Предмет успешно был удалён из расписания. Обновите страницу");
+        } else {
+            alert("Возникли следующие ошибки:\n" + data);
+        }
+    });
+}
+
+function fillAddSubjectDropdown() {
+    if (!semester || !week) {
+        return;
+    }
+
+    requestWithCsrf("php/getSemesterSubjects.php", "semester=" + semester + "&week=" + week, function (data) {
+        if (isJsonObject(data)) {
+            let subjectList = JSON.parse(data);
+            if (!Array.isArray(subjectList)) {
+                alert("Ошибка. Возвращаемое значение из getSemesterSubjects.php не является массивом");
+                return;
+            }
+
+            subjectList.forEach(function (subject) {
+                addSubjectDropdown.innerHTML += "<button class=\"dropdown-item subject" + subject["id"] + "\" id=\"subjectDropdownItem\" type=\"button\">" + subject["aliasName"] + "</button>\n";
+            });
+            document.querySelectorAll("#subjectDropdownItem").forEach(item => {
+                item.addEventListener("click", selectSubjectDropdownItem);
+            });
+
+        } else if (typeof data === "string") {
+            alert(data);
+        } else {
+            alert("Ошибка. Тип возвращаемого значения из getSemesterSubjects.php не установлен");
+        }
+    });
+}
+
+function selectSubjectDropdownItem() {
+    if (selectedSubject) {
+        selectedSubject.classList.remove("active");
+    }
+    
+    event.target.classList.add("active");
+    selectedSubject = event.target;
+}
+
+function addSubject() {
+    if (!selectedSubject) {
+        alert("Сначала выберите предмет, который вы хотите добавить");
+        return;
+    }
+    
+    if (!selectedCell) {
+        alert("Выберите ячейку в таблице с расписанием");
+        return;
+    }
+    
+    let subject_id = selectedSubject.classList[1];
+
+    if (!subject_id) {
+        return;
+    }
+
+    subject_id = subject_id.substring(("subject").length);
+    
+    let day = selectedCell.classList[0];
+    let number = selectedCell.classList[1];
+
+    if (!semester || !week || !day || !number) {
+        console.log("vseploha");
+        return;
+    }
+
+    day = day.substring(3);
+    number = number.substring(6);
+    
+    if (inputAddSubjectLecturer.value.trim() === "") {
+        alert("Введите имя лектора");
+        return;
+    }
+    
+    if (inputAddSubjectRoom.value.trim() === "") {
+        alert("Введите название аудитории");
+        return;
+    }
+    
+    requestWithCsrf("php/addSubject.php", "semester=" + semester + "&week=" + week + "&day=" + day + "&number=" + number + "&subject_id=" + subject_id + "&lecturer=" + inputAddSubjectLecturer.value + "&room=" + inputAddSubjectRoom.value, function(data){
+        if (data === "success") {
+            alert("Предмет был добавлен. Обновите страницу");
+        } else {
+            alert("Возникли следующие ошибки:\n" + data);
         }
     });
 }
