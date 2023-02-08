@@ -478,9 +478,9 @@ function fillAddSubjectDropdown() {
             });
 
         } else if (typeof data === "string") {
-            alert(data);
+            //alert(data);
         } else {
-            alert("Ошибка. Тип возвращаемого значения из getSemesterSubjects.php не установлен");
+            //alert("Ошибка. Тип возвращаемого значения из getSemesterSubjects.php не установлен");
         }
     });
 }

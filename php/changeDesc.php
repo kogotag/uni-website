@@ -82,6 +82,14 @@ if ($errors) {
     exit;
 }
 
+function updateText($text) {
+    $text = str_replace("\n", "<br>", $text);
+    $text = str_replace("&lt;br&gt;", "<br>", $text);
+    return $text;
+}
+
+$hw_from = updateText($hw_from);
+
 try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 

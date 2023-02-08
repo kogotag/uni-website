@@ -237,12 +237,8 @@
                                             <div class="modal-body">
                                                 <div class="container-fluid">
                                                     <div id="changeDescInfo"></div>
-                                                    <form class="mx-0">
-                                                        <div class="form-group my-0">
-                                                            <label for="hwFromThisDayInput">Домашнее задание, которое задали в этот день</label>
-                                                            <input type="text" id="hwFromThisDayInput" name="hwFromThisDayInput">
-                                                        </div>
-                                                    </form>
+                                                    <h6>Домашнее задание, которое задали в этот день</h6>
+                                                    <textarea class="form-control mb-3" id="hwFromThisDayInput" rows="3"></textarea>
                                                     <div class="btn btn-primary mt-2 mr-2" id="changeDescButton">
                                                         Отправить
                                                     </div>
