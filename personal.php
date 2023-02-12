@@ -18,12 +18,17 @@
             <h3>Личный кабинет</h3>
             <?php if (isLoggedIn()): ?>
                 <p>Личный кабинет в разработке</p>
+                <?php if ($_SESSION["user_admin_rank"] === 1): ?>
+                <h4>Администрирование</h4>
+                <h5>Git</h5>
+                <button class="btn btn-primary" id="buttonGitPull">Bring remote changes</button>
+                <?php endif; ?>
             <?php else: ?>
                 <p>Войдите в аккаунт или зарегистрируйтесь, чтобы получить доступ к личному кабинету</p>
             <?php endif; ?>
         </div>
         <?php require 'footer.php'; ?>
         <?php require 'php/importImportantJsScripts.php'; ?>
-        <script src="js/index_page_news.js"></script>
+        <script src="js/personal.js"></script>
     </body>
 </html>

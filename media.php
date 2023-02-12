@@ -28,12 +28,10 @@
                 <a href="https://www.youtube.com/playlist?list=PLcsiGEUf6YIH4Vi0dDqD3f-BKpoZ4QXYu">Записи лекций по профкультуре</a><br>
             <?php endif; ?>
             <h3 class="mt-4">Семестр 2</h3>
-            <h4>Ссылки</h4>
-            <h6>Программирование</h6>
             <?php if (isLoggedIn() && $_SESSION["user_from_group"] === 1): ?>
-            <a href="https://drive.google.com/drive/folders/1SdMb3JlT97Ov8xnfqVD9V0agIEz9gOWF">гугл-диск</a>
+            <a href="https://drive.google.com/drive/folders/1SdMb3JlT97Ov8xnfqVD9V0agIEz9gOWF">Программирование гугл-диск</a>
             <?php else: ?>
-            <a href="/errorPage.php?message=authLink">гугл-диск</a>
+            <a href="/errorPage.php?message=authLink">программирование гугл-диск</a>
             <?php endif; ?>
         </div>
 

@@ -20,6 +20,8 @@ define("CSRF_TOKEN_SECRET", "fghfghfh2");
 
 define("MAX_AUDIO_FILE_SIZE", 300 * 1024 * 1024);
 
+define("WEB_SERVER_FOLDER", "/var/www/html");
+
 //Cookie settings
 session_set_cookie_params(['samesite' => 'strict']);
 session_start();
