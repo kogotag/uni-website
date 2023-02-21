@@ -177,7 +177,7 @@ function getSubjectTypeBySubjectId($subject_id) {
     if (!$exec) {
         return [];
     }
-    
+
     return $stmt->fetch();
 }
 
@@ -351,33 +351,33 @@ function getLastSubjectNumberBeforeCoordinate($semester, $week, $day, $class_num
 
     $stmt = $dbh->prepare("SELECT MAX(number) FROM `ssau_schedule` WHERE subject_id=? AND semester=? AND (week<? OR (week=? AND day<?) OR (week=? AND day=? AND class_number<?));");
     $exec = $stmt->execute(array($subject_id, $semester, $week, $week, $day, $week, $day, $class_number));
-    
+
     if (!$exec) {
         return 0;
     }
-    
+
     $result = $stmt->fetch();
-    
+
     if (empty($result)) {
         return 0;
     }
-    
+
     return $result[0];
 }
 
 function insertSubjectByCoordinatesAndType($semester, $week, $day, $class_number, $subject_id, $lecturer, $room) {
     global $dbh;
     global $semester_times;
-    
+
     $last_number = getLastSubjectNumberBeforeCoordinate($semester, $week, $day, $class_number, $subject_id);
-    
+
     if ($last_number === "NULL") {
         $last_number = 0;
     }
 
     $stmt = $dbh->prepare("INSERT INTO `ssau_schedule` (`subject_id`, `number`, `semester`, `week`, `day`, `class_number`, `time_start`, `time_end`, `lecturer`, `room`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-    $exec = $stmt->execute(array($subject_id, intval($last_number)+1, $semester, $week, $day, $class_number, semesterTimeGetStart($semester_times[$semester][$class_number]), semesterTimeGetEnd($semester_times[$semester][$class_number]), $lecturer, $room));
-    
+    $exec = $stmt->execute(array($subject_id, intval($last_number) + 1, $semester, $week, $day, $class_number, semesterTimeGetStart($semester_times[$semester][$class_number]), semesterTimeGetEnd($semester_times[$semester][$class_number]), $lecturer, $room));
+
     return $exec;
 }
 
@@ -394,4 +394,35 @@ function checkIfCellFilled($semester, $week, $day, $class_number) {
     $result = $stmt->fetch();
 
     return !empty($result);
+}
+
+function deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, $table_name) {
+    global $dbh;
+
+    $stmt_schedule = $dbh->prepare("SELECT * FROM `ssau_schedule` WHERE semester=? AND week=? AND day=? AND class_number=?;");
+    $exec_schedule = $stmt_schedule->execute(array($semester, $week, $day, $class_number));
+
+    if (!$exec_schedule) {
+        return false;
+    }
+
+    $schedule_row = $stmt_schedule->fetch();
+
+    if (!$schedule_row || empty($schedule_row) || !array_key_exists("id", $schedule_row)) {
+        return false;
+    }
+    
+    $schedule_id = $schedule_row["id"];
+    
+    $stmt = $dbh->prepare("DELETE FROM `" . $table_name . "` WHERE schedule_id=?;");
+    $exec = $stmt->execute(array($schedule_id));
+    
+    return $exec;
+}
+
+function deleteAllAttachmentsFromScheduleCell($semester, $week, $day, $class_number) {
+    deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_audios");
+    deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_attachments");
+    deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_comments");
+    deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_videos");
 }

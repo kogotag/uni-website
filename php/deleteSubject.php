@@ -95,6 +95,8 @@ try {
         exit();
     }
     
+    deleteAllAttachmentsFromScheduleCell($semester, $week, $day, $number);
+    
     $delete_result = deleteSubjectByRowId($row_id);
     
     if(!$delete_result) {
