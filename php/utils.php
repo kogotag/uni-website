@@ -38,3 +38,24 @@ function replaceNewLineWithHtmlTag($text) {
     
     return str_replace("\n", "<br>", $text);
 }
+
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $randomString;
+}
+
+function sendEmail($to, $subject, $message) {
+    $mail_headers[] = "MIME-Version: 1.0";
+    $mail_headers[] = "From: " . SMTP_FROM;
+    $mail_headers[] = "Content-type: text/plain; charset=utf-8";
+    
+    mb_internal_encoding("UTF-8");
+    
+    $encoded_subject = mb_encode_mimeheader($subject, 'UTF-8', 'B', "\r\n", strlen('Subject: '));
+    
+    return mail($to, $encoded_subject, $message, implode("\r\n", $mail_headers));
+}

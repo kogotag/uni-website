@@ -134,6 +134,29 @@ function getUserById($id) {
     return $user_name;
 }
 
+function getUserByEmail($email) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE email=?;");
+    $exec = $stmt->execute(array($email));
+    
+    if(!$exec) {
+        return false;
+    }
+    
+    $result = $stmt->fetch();
+    
+    if (!$result) {
+        return false;
+    }
+    
+    if(!array_key_exists("id", $result)) {
+        return false;
+    }
+    
+    return $result["id"];
+}
+
 function getScheduleSubjectWithClassNumberBySemesterAndWeek($semester, $week, $class_number) {
     global $dbh;
 
@@ -425,4 +448,42 @@ function deleteAllAttachmentsFromScheduleCell($semester, $week, $day, $class_num
     deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_attachments");
     deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_comments");
     deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, "subjects_videos");
+}
+
+function generateResetPasswordCode($user_id) {
+    global $dbh;
+    
+    $code = generateRandomString(255);
+    $stmt = $dbh->prepare("INSERT INTO `reset_password` (`user_id`, `code`) VALUES (?, ?);");
+    $exec = $stmt->execute(array($user_id, $code));
+    
+    return $code;
+}
+
+function getUserIdForResetPasswordByCode($code) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT * FROM `reset_password` WHERE code=?;");
+    $exec = $stmt->execute(array($code));
+    
+    if (!$exec) {
+        return false;
+    }
+    
+    $result = $stmt->fetch();
+    
+    if(!$result || !array_key_exists("user_id", $result)) {
+        return false;
+    }
+    
+    return $result["user_id"];
+}
+
+function changeUserPassword($user_id, $password_hash) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("UPDATE `users` SET password_hash=? WHERE id=?;");
+    $exec = $stmt->execute(array($password_hash, $user_id));
+    
+    return $exec;
 }
