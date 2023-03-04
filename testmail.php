@@ -14,8 +14,8 @@
         <?php require 'navbar.php'; ?>
         <div class="container-fluid">
             <div class="row mb-2 mt-4">
-                <div class="col-4 pr-0"></div>
-                <div class="col-4">
+                <div class="col-lg-4 pr-0"></div>
+                <div class="col-lg-4 col-md-12">
                     <h4 class="text-center">Проверка почтового сервера</h4>
                     <form id="formTestEmail" class="mx-0" style="width: 100%;">
                         <div class="form-group mb-3">
@@ -31,7 +31,7 @@
                     </form>
                     <div class="btn btn-primary" id="btnSendEmail">Отправить письмо</div>
                 </div>
-                <div class="col-4 pl-0"></div>
+                <div class="col-lg-4 pl-0"></div>
             </div>
         </div>
         <?php require 'footer.php'; ?>
