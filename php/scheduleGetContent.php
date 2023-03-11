@@ -56,6 +56,7 @@ function getAudios() {
 
     foreach ($audios as $audio) {
         $user_name = getUserById($audio["user_id"]);
+        // тут нет проверки на существование юзера
         $split = explode("/", $audio["url"]);
         $audio_name = $split[count($split)-1];
         $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил аудио <span class="font-weight-bold">' . $audio_name . '</span>:<br><audio controls><source src="' . $audio["url"] . '" type="audio/mpeg">Your browser does not support audio players</audio><br>';

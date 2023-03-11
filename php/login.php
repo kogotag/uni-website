@@ -62,8 +62,7 @@ try {
 
     $user = loginAttemptCheckUser($login);
     
-    //тут тоже этот баг с !. Если юзер эмпти, то в первом ифе уже прервется
-    if (!$user) {
+    if ($user === false) {
         echo '<p>Ошибка подключения к БД</p>';
         exit();
     }

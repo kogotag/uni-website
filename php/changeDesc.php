@@ -91,8 +91,6 @@ function updateText($text) {
 $hw_from = updateText($hw_from);
 
 try {
-    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
-
     $current_desc = scheduleGetDesc($semester, $week, $day, $number);
 
     $hw_from_old = "";
