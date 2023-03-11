@@ -457,6 +457,10 @@ function generateResetPasswordCode($user_id) {
     $stmt = $dbh->prepare("INSERT INTO `reset_password` (`user_id`, `code`) VALUES (?, ?);");
     $exec = $stmt->execute(array($user_id, $code));
 
+    if (!$exec) {
+        return false;
+    }
+
     return $code;
 }
 
@@ -555,6 +559,55 @@ function passwordResetNumberAttemptsValidate($ip) {
     $result = $stmt->fetchAll();
 
     if (count($result) >= PASSWORD_RESET_ATTEMPT_MAX_PER_DAY) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function addResetPasswordEmailRequest($ip, $user_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `reset_password_email_requests` (`ip`, `user_id`) VALUES(?, ?);");
+    $exec = $stmt->execute(array($ip, $user_id));
+
+    return $exec;
+}
+
+function checkResetPasswordEmailRequestsNotTooOften($ip) {
+    global $dbh;
+
+    $timeCompare = date("Y-m-d H:i:s", strtotime("-1 minutes"));
+    $stmt = $dbh->prepare("SELECT `id` FROM `reset_password_email_requests` WHERE ip=? AND timestamp>?;");
+    $exec = $stmt->execute(array($ip, $timeCompare));
+
+    if (!$exec) {
+        return false;
+    }
+
+    $result = $stmt->fetchAll();
+
+    if (count($result) > 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkResetPasswordEmailRequestsDaily($ip) {
+    global $dbh;
+
+    $timeCompare = date("Y-m-d H:i:s", strtotime("-1 day"));
+    $stmt = $dbh->prepare("SELECT `id` FROM `reset_password_email_requests` WHERE ip=? AND timestamp>?;");
+    $exec = $stmt->execute(array($ip, $timeCompare));
+
+    if (!$exec) {
+        return false;
+    }
+
+    $result = $stmt->fetchAll();
+
+    if (count($result) >= PASSWORD_RESET_EMAIL_REQUEST_MAX_PER_DAY) {
         return false;
     } else {
         return true;

@@ -37,11 +37,12 @@ try {
     
     $check_login_attempts = checkLoginAttempts($ip);
     
-    if (!$check_login_attempts) {
+    if ($check_login_attempts === false) {
         echo '<p>Ошибка подключения к БД</p>';
         exit();
     }
     
+    //TODO: переделать эту помойку по новому. см databaseQueries
     $time_now = new DateTime();
     $attempts_count = 0;
     
@@ -61,6 +62,7 @@ try {
 
     $user = loginAttemptCheckUser($login);
     
+    //тут тоже этот баг с !. Если юзер эмпти, то в первом ифе уже прервется
     if (!$user) {
         echo '<p>Ошибка подключения к БД</p>';
         exit();

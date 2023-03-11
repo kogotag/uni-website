@@ -32,13 +32,18 @@
                                 <input class="form-control" type="text" name="login" id="login" placeholder="login"><br>
                             </div>
                         </div>
-                        <div class="form-group my-0">
+                        <div class="form-group my-0 mb-2">
                             <label for="password">Пароль</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <input class="form-control" type="password" name="password" id="password" placeholder="Пароль"><br>
                             </div>
                         </div>
-                        <div class="btn btn-primary" id="loginbtn">Войти</div>
+                        <div class="form-group my-0 mb-2">
+                            <a href="/forgotPassword.php">Забыли пароль?</a>
+                        </div>
+                        <div class="form-group my-0">
+                            <div class="btn btn-primary" id="loginbtn">Войти</div>
+                        </div>
                     </form>
                 </div>
                 <div class="col"></div>
