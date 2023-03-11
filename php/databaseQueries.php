@@ -528,6 +528,35 @@ function loginSaveAuthorization($user_id, $selector, $authenticator_hash) {
 
     $stmt = $dbh->prepare("INSERT INTO `authorization` (`user_id`, `selector`, `token`) VALUES(?, ?, ?);");
     $exec = $stmt->execute(array($user_id, $selector, $authenticator_hash));
-    
+
     return $exec;
+}
+
+function addPasswordResetAttempt($ip, $isSuccessful) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `reset_password_attempts` (`ip`, `success`) VALUES(?, ?);");
+    $exec = $stmt->execute(array($ip, (int) $isSuccessful));
+
+    return $exec;
+}
+
+function passwordResetNumberAttemptsValidate($ip) {
+    global $dbh;
+
+    $timeCompare = date("Y-m-d H:i:s", strtotime("-1 day"));
+    $stmt = $dbh->prepare("SELECT `id` FROM `reset_password_attempts` WHERE ip=? AND success=0 AND timestamp>?;");
+    $exec = $stmt->execute(array($ip, $timeCompare));
+
+    if (!$exec) {
+        return false;
+    }
+
+    $result = $stmt->fetchAll();
+
+    if (count($result) >= PASSWORD_RESET_ATTEMPT_MAX_PER_DAY) {
+        return false;
+    } else {
+        return true;
+    }
 }

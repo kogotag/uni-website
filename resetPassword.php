@@ -2,13 +2,19 @@
 <?php require_once 'php/auth.php'; ?>
 <?php require_once 'php/databaseQueries.php'; ?>
 <?php
+$ip = filter_input(INPUT_SERVER, "REMOTE_ADDR");
 $resetId = htmlspecialchars(filter_input(INPUT_GET, 'resetId'));
+
+if (!passwordResetNumberAttemptsValidate($ip)) {
+    header("Location: /errorPage.php?message=passwordResetTooManyAttempts");
+}
 
 if (!$resetId) {
     header("Location: /errorPage.php?message=noResetId");
 }
 
 $user_id = getUserIdForResetPasswordByCode($resetId);
+addPasswordResetAttempt($ip, (bool) $user_id);
 
 if (!$user_id) {
     header("Location: /errorPage.php?message=invalidResetId");
