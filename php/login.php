@@ -1,6 +1,7 @@
 <?php
 
 require_once 'utils.php';
+require_once 'databaseQueries.php';
 
 try {
     $login = htmlspecialchars(trim(filter_input(INPUT_POST, 'login')));
@@ -33,18 +34,14 @@ try {
     if ($errors) {
         exit();
     }
-
-    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
     
-    $stmt_check_login_attempts = $dbh->prepare("SELECT * FROM `login_attempts` WHERE `ip`=?;");
-    $exec_check_login_attempts = $stmt_check_login_attempts->execute(array($ip));
+    $check_login_attempts = checkLoginAttempts($ip);
     
-    if (!$exec_check_login_attempts) {
+    if (!$check_login_attempts) {
         echo '<p>Ошибка подключения к БД</p>';
         exit();
     }
     
-    $check_login_attempts = $stmt_check_login_attempts->fetchAll();
     $time_now = new DateTime();
     $attempts_count = 0;
     
@@ -60,18 +57,14 @@ try {
         exit();
     }
     
-    $stmt_add_attempt = $dbh->prepare("INSERT INTO `login_attempts` (`ip`) VALUES(?);");
-    $exec_add_attempt = $stmt_add_attempt->execute(array($ip));
+    addLoginAttempt($ip, $login);
 
-    $stmt_check_user = $dbh->prepare("SELECT * FROM `users` WHERE `login`=? OR `email`=?;");
-    $exec_check_user = $stmt_check_user->execute(array($login, $login));
-
-    if (!$exec_check_user) {
+    $user = loginAttemptCheckUser($login);
+    
+    if (!$user) {
         echo '<p>Ошибка подключения к БД</p>';
         exit();
     }
-
-    $user = $stmt_check_user->fetch();
 
     if (empty($user)) {
         echo '<p>Пользователь не найден</p>';
@@ -97,8 +90,7 @@ try {
                 ]
         );
 
-        $stmt_login = $dbh->prepare("INSERT INTO `authorization` (`user_id`, `selector`, `token`) VALUES(?, ?, ?);");
-        $exec_login = $stmt_login->execute(array($user["id"], $selector, hash("sha256", $authenticator)));
+        loginSaveAuthorization($user["id"], $selector, hash("sha256", $authenticator));
 
         echo "success";
     } else {

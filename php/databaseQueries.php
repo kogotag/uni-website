@@ -136,24 +136,24 @@ function getUserById($id) {
 
 function getUserByEmail($email) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("SELECT * FROM `users` WHERE email=?;");
     $exec = $stmt->execute(array($email));
-    
-    if(!$exec) {
+
+    if (!$exec) {
         return false;
     }
-    
+
     $result = $stmt->fetch();
-    
+
     if (!$result) {
         return false;
     }
-    
-    if(!array_key_exists("id", $result)) {
+
+    if (!array_key_exists("id", $result)) {
         return false;
     }
-    
+
     return $result["id"];
 }
 
@@ -434,12 +434,12 @@ function deleteRowFromTableByScheduleId($semester, $week, $day, $class_number, $
     if (!$schedule_row || empty($schedule_row) || !array_key_exists("id", $schedule_row)) {
         return false;
     }
-    
+
     $schedule_id = $schedule_row["id"];
-    
+
     $stmt = $dbh->prepare("DELETE FROM `" . $table_name . "` WHERE schedule_id=?;");
     $exec = $stmt->execute(array($schedule_id));
-    
+
     return $exec;
 }
 
@@ -452,38 +452,82 @@ function deleteAllAttachmentsFromScheduleCell($semester, $week, $day, $class_num
 
 function generateResetPasswordCode($user_id) {
     global $dbh;
-    
+
     $code = generateRandomString(255);
     $stmt = $dbh->prepare("INSERT INTO `reset_password` (`user_id`, `code`) VALUES (?, ?);");
     $exec = $stmt->execute(array($user_id, $code));
-    
+
     return $code;
 }
 
 function getUserIdForResetPasswordByCode($code) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("SELECT * FROM `reset_password` WHERE code=?;");
     $exec = $stmt->execute(array($code));
-    
+
     if (!$exec) {
         return false;
     }
-    
+
     $result = $stmt->fetch();
-    
-    if(!$result || !array_key_exists("user_id", $result)) {
+
+    if (!$result || !array_key_exists("user_id", $result)) {
         return false;
     }
-    
+
     return $result["user_id"];
 }
 
 function changeUserPassword($user_id, $password_hash) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("UPDATE `users` SET password_hash=? WHERE id=?;");
     $exec = $stmt->execute(array($password_hash, $user_id));
+
+    return $exec;
+}
+
+function checkLoginAttempts($ip) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `login_attempts` WHERE `ip`=?;");
+    $exec = $stmt->execute(array($ip));
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $stmt->fetchAll();
+}
+
+function addLoginAttempt($ip, $login) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `login_attempts` (`ip`, `login`) VALUES(?, ?);");
+    $exec = $stmt->execute(array($ip, $login));
+
+    return $exec;
+}
+
+function loginAttemptCheckUser($login) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE `login`=? OR `email`=?;");
+    $exec = $stmt->execute(array($login, $login));
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $stmt->fetch();
+}
+
+function loginSaveAuthorization($user_id, $selector, $authenticator_hash) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `authorization` (`user_id`, `selector`, `token`) VALUES(?, ?, ?);");
+    $exec = $stmt->execute(array($user_id, $selector, $authenticator_hash));
     
     return $exec;
 }
