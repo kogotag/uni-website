@@ -9,6 +9,7 @@ define("DB_USERNAME", "root");
 define("DB_PASSWORD", "root");
 
 //SMTP
+define("SEND_EMAILS", true);
 define("SMTP_FROM", "postmaster@mehaniki05.ru");
 define("SMTP_FROMNAME", "Mehaniki 1105");
 

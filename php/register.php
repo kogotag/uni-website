@@ -54,9 +54,9 @@ try {
     $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);
 
     $stmt_check_login = $dbh->prepare("SELECT `id` FROM `users` WHERE `login`=?;");
-    $check_login = $stmt_check_login->execute(array($login));
+    $user = $stmt_check_login->execute(array($login));
 
-    if ($check_login == null || !$check_login) {
+    if ($user == null || !$user) {
         $stmt_check_login = null;
         $errors[] = 7;
         echo json_encode($errors);
@@ -134,24 +134,26 @@ try {
     $stmt_verification = $dbh->prepare("INSERT INTO `verification_links` (`code`, `user_id`) VALUES(?, ?);");
     $exec_verification = $stmt_verification->execute(array($verification_code, $user_id));
 
-    $stmt_write_attempt_ip = $dbh->prepare("INSERT INTO `mail_verifications_attempts` (`ip`) VALUES (?);");
-    $exec_write_attempt_ip = $stmt_write_attempt_ip->execute(array($ip));
+    $stmt_write_attempt_ip = $dbh->prepare("INSERT INTO `mail_verifications_attempts` (`ip`, `user_id`) VALUES (?, ?);");
+    $exec_write_attempt_ip = $stmt_write_attempt_ip->execute(array($ip, $user_id));
 
-    $mail_headers[] = "MIME-Version: 1.0";
-    $mail_headers[] = "From: " . SMTP_FROM;
-    $mail_headers[] = "Content-type: text/plain; charset=utf-8";
+    if (SEND_EMAILS) {
+        $mail_headers[] = "MIME-Version: 1.0";
+        $mail_headers[] = "From: " . SMTP_FROM;
+        $mail_headers[] = "Content-type: text/plain; charset=utf-8";
 
-    mb_internal_encoding("UTF-8");
-    $encoded_subject = mb_encode_mimeheader("Подтвердите регистрацию на нашем сайте", 'UTF-8', 'B', "\r\n", strlen('Subject: '));
+        mb_internal_encoding("UTF-8");
+        $encoded_subject = mb_encode_mimeheader("Подтвердите регистрацию на нашем сайте", 'UTF-8', 'B', "\r\n", strlen('Subject: '));
 
-    $mail_message = "Здравствуйте, " . $name . "! Перейдите по ссылке, чтобы подтвердить регистрацию: "
-            . "https://mehaniki05.ru/verify.php?code=" . $verification_code;
+        $mail_message = "Здравствуйте, " . $name . "! Перейдите по ссылке, чтобы подтвердить регистрацию: "
+                . "https://mehaniki05.ru/verify.php?code=" . $verification_code;
 
-    $result_of_email = mail($email, $encoded_subject, $mail_message, implode("\r\n", $mail_headers));
-    if (!$result_of_email) {
-        $errors[] = 11;
-        echo(json_encode($errors));
-        exit;
+        $result_of_email = mail($email, $encoded_subject, $mail_message, implode("\r\n", $mail_headers));
+        if (!$result_of_email) {
+            $errors[] = 11;
+            echo(json_encode($errors));
+            exit;
+        }
     }
     $dbh = null;
 } catch (PDOException $e) {
