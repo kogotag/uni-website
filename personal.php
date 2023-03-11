@@ -17,11 +17,12 @@
         <div class="container-fluid px-2 py-2">
             <h3>Личный кабинет</h3>
             <?php if (isLoggedIn()): ?>
-                <p>Личный кабинет в разработке</p>
+                <h4>Безопасность</h4>
+                <a class="btn btn-primary" href="/changePassword.php">Сменить пароль</a>
                 <?php if ($_SESSION["user_admin_rank"] === 1): ?>
-                <h4>Администрирование</h4>
-                <h5>Git</h5>
-                <button class="btn btn-primary" id="buttonGitPull">Bring remote changes</button>
+                    <h4>Администрирование</h4>
+                    <h5>Git</h5>
+                    <button class="btn btn-primary" id="buttonGitPull">Bring remote changes</button>
                 <?php endif; ?>
             <?php else: ?>
                 <p>Войдите в аккаунт или зарегистрируйтесь, чтобы получить доступ к личному кабинету</p>
