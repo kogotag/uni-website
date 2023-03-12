@@ -4,7 +4,7 @@ require_once 'utils.php';
 require_once 'auth.php';
 require_once 'databaseQueries.php';
 
-$allowedFileExtensions = array("pdf");
+$allowedFileExtensions = array("pdf", "jpg", "jpeg", "png");
 
 if (!isLoggedIn()) {
     echo 'Войдите, чтобы отправить сообщение';
