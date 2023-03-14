@@ -32,14 +32,14 @@
             <?php endif; ?>
             <h3>Механика</h3>
             <h4>Учебники</h4>
-            <a href="/media/physics_uchebnik_irodov.pdf">Учебник Иродова</a><br>
-            <a href="/media/physics_uchebnik_matveev.pdf">Учебник Матвеева</a><br>
-            <a href="/media/physics_uchebnik_saveliev.pdf">Учебник Савельева</a><br>
-            <a href="/media/physics_uchebnik_sivuhin.pdf">Учебник Сивухина</a><br>
-            <a href="/media/physics_uchebnik_trofimova.pdf">Учебник Трофимова</a>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_uchebnik_irodov.pdf" ?>">Учебник Иродова</a><br>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_uchebnik_matveev.pdf" ?>">Учебник Матвеева</a><br>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_uchebnik_saveliev.pdf" ?>">Учебник Савельева</a><br>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_uchebnik_sivuhin.pdf" ?>">Учебник Сивухина</a><br>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_uchebnik_trofimova.pdf" ?>">Учебник Трофимовой</a>
             <h4>Задачники</h4>
-            <a href="/media/physics_zadachnik_chertov.pdf">Задачник Чертова</a><br>
-            <a href="/media/physics_zadachnik_irodov.pdf">Задачник Иродова</a>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_zadachnik_chertov.pdf" ?>">Задачник Чертова</a><br>
+            <a href="<?php echo "/", FILES_FOLDER_REFERENCE, "/", "physics_zadachnik_irodov.pdf" ?>">Задачник Иродова</a>
         </div>
 
         <?php require 'footer.php'; ?>

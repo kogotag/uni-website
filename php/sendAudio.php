@@ -91,7 +91,7 @@ try {
     $schedule_row = getScheduleRowByCoordinates($semester, $week, $day, $number);
     $subject_id = $schedule_row["subject_id"];
     
-    $upload_dir = "/var/www/html/media/semester" . $semester . "/" . $subject_id . "/";
+    $upload_dir = WEB_SERVER_FOLDER . "/" . FILES_FOLDER_REFERENCE . "/semester" . $semester . "/" . $subject_id . "/";
     
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0755);

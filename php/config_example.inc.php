@@ -25,6 +25,7 @@ define("CSRF_TOKEN_SECRET", "fghfghfh2");
 define("MAX_AUDIO_FILE_SIZE", 300 * 1024 * 1024);
 
 define("WEB_SERVER_FOLDER", "/var/www/html");
+define("FILES_FOLDER_REFERENCE", "files");
 
 //Time settings
 date_default_timezone_set("Europe/Moscow");
