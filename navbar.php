@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-light" href="/index.php">Главная</a>
+                    <a class="nav-link text-light" href="/">Главная</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-light" href="" role="button" data-toggle="dropdown" aria-expanded="false">
