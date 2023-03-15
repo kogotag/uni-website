@@ -3,8 +3,8 @@
 <?php require_once 'php/semesterDates.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <div class="mr-3">
-            <img class="img-fluid" width="25px" height="auto" src="img/ssaulogo.svg"/>
+        <div class="mr-2">
+            <img class="img-fluid" width="32px" height="auto" src="img/logo.svg"/>
         </div>
         <span class="navbar-brand text-light">Сайт 1105</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
@@ -26,6 +26,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/media.php">Медиа</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/forum.php">Форум</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">

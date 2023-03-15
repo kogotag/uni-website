@@ -613,3 +613,283 @@ function checkResetPasswordEmailRequestsDaily($ip) {
         return true;
     }
 }
+
+function forumGetForums() {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_forums` ORDER BY `id`;");
+    $exec = $stmt->execute(array());
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumGetTopics($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_topics.author=temp.user_id WHERE forum=? ORDER BY `id`;");
+    $exec = $stmt->execute(array($forum_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumGetPosts($topic_id, $page = 1) {
+    global $dbh;
+
+    try {
+        $page = intval($page);
+    } catch (Exception $ex) {
+        return [];
+    }
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_posts.author=temp.user_id WHERE topic=? ORDER BY `id` LIMIT ? OFFSET ?;");
+    $stmt->bindValue(1, $topic_id, PDO::PARAM_INT);
+    $stmt->bindValue(2, FORUM_MESSAGES_PER_PAGE, PDO::PARAM_INT);
+    $stmt->bindValue(3, ($page - 1) * FORUM_MESSAGES_PER_PAGE, PDO::PARAM_INT);
+    $exec = $stmt->execute();
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumGetTopicInfo($topic_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` WHERE id=?;");
+    $exec = $stmt->execute(array($topic_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetch();
+}
+
+function forumGetForumInfo($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_forums` WHERE id=?;");
+    $exec = $stmt->execute(array($forum_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetch();
+}
+
+function forumGetPostInfo($post_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` WHERE id=?;");
+    $exec = $stmt->execute(array($post_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetch();
+}
+
+function forumBreadCrumbTopicPage($topic_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT id, forum, name, forum_id, forum_name FROM `forum_topics` INNER JOIN (SELECT id AS forum_id, name AS forum_name FROM `forum_forums`) AS temp ON forum_topics.forum=temp.forum_id WHERE id=?;");
+    $exec = $stmt->execute(array($topic_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetch();
+}
+
+function forumGetForumTopicsNumber($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT forum FROM `forum_topics` WHERE forum=?;");
+    $exec = $stmt->execute(array($forum_id));
+
+    if (!$exec) {
+        return 0;
+    }
+
+    return count($stmt->fetchAll());
+}
+
+function forumGetTopicPostsNumber($topic_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT topic FROM `forum_posts` WHERE topic=?;");
+    $exec = $stmt->execute(array($topic_id));
+
+    if (!$exec) {
+        return 0;
+    }
+
+    $posts_count = count($stmt->fetchAll());
+    $pages_count = ceil($posts_count / FORUM_MESSAGES_PER_PAGE);
+
+    $result = [];
+    $result["posts_count"] = $posts_count;
+    $result["pages_count"] = $pages_count;
+
+    return $result;
+}
+
+function forumGetPostPageNumber($post_id) {
+    global $dbh;
+
+    $stmt_topic = $dbh->prepare("SELECT id, topic FROM `forum_posts` WHERE id=?;");
+    $exec_topic = $stmt_topic->execute(array($post_id));
+
+    if (!$exec_topic) {
+        return 1;
+    }
+
+    $result_topic = $stmt_topic->fetch();
+
+    if (!$result_topic) {
+        return 1;
+    }
+
+    $topic_id = $result_topic["topic"];
+
+    $stmt = $dbh->prepare("SELECT id, topic FROM `forum_posts` WHERE id < ? AND topic=?;");
+    $stmt->bindValue(1, $post_id, PDO::PARAM_INT);
+    $stmt->bindValue(2, $topic_id, PDO::PARAM_INT);
+    $exec = $stmt->execute();
+
+    if (!$exec) {
+        return 1;
+    }
+
+    return ceil((count($stmt->fetchAll()) + 1) / FORUM_MESSAGES_PER_PAGE);
+}
+
+function forumAddPost($text, $topic_id, $user_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `forum_posts` (`content`, `topic`, `author`) VALUES(?, ?, ?);");
+    $exec = $stmt->execute(array($text, $topic_id, $user_id));
+    $id = $dbh->lastInsertId();
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $id;
+}
+
+function forumEditPost($text, $post_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `forum_posts` SET content=?, edits_count = edits_count + 1, last_edit_timestamp = now() WHERE id=?;");
+    $exec = $stmt->execute(array($text, $post_id));
+
+    return $exec;
+}
+
+function forumUploadRemember($user_id, $file_name, $file_dir, $file_size) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `forum_files_control` (`user_id`, `file_name`, `file_dir`, `file_size`) VALUES(?, ?, ?, ?);");
+    $exec = $stmt->execute(array($user_id, $file_name, $file_dir, $file_size));
+    $id = $dbh->lastInsertId();
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $id;
+}
+
+function forumUploadCheckDailyQuota($user_id) {
+    global $dbh;
+
+    $timeCompare = date("Y-m-d H:i:s", strtotime("-1 day"));
+    $stmt = $dbh->prepare("SELECT user_id, file_size, timestamp FROM `forum_files_control` WHERE user_id=? AND timestamp>?;");
+    $exec = $stmt->execute(array($user_id, $timeCompare));
+
+    if (!$exec) {
+        return false;
+    }
+
+    $size = 0;
+    foreach ($stmt->fetchAll() as $row) {
+        $size += intval($row["file_size"]);
+    }
+
+    if ($size >= FORUM_UPLOAD_DAILY_QUOTA) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function forumUploadGetInfo($id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_files_control` WHERE id=?;");
+    $exec = $stmt->execute(array($id));
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $stmt->fetch();
+}
+
+function forumFindUploadByFileName($file) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_files_control` WHERE file_name=?;");
+    $exec = $stmt->execute(array($file));
+
+    if (!$exec) {
+        return false;
+    }
+
+    return $stmt->fetch();
+}
+
+function forumGetPostImages($post_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts_images` INNER JOIN (SELECT id AS file_id, file_name, file_dir FROM `forum_files_control`) AS temp ON attachment=temp.file_id WHERE post=? ORDER BY number;");
+    $exec = $stmt->execute(array($post_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumPostAddImage($user_id, $post_id, $number, $attachment_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `forum_posts_images` (`user_id`, `post`, `number`, `attachment`) VALUES(?, ?, ?, ?);");
+    $exec = $stmt->execute(array($user_id, $post_id, $number, $attachment_id));
+
+    return $exec;
+}
+
+function forumPostDeleteImages($post_id) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("DELETE FROM `forum_posts_images` WHERE post=?;");
+    $exec = $stmt->execute(array($post_id));
+    
+    return $exec;
+}

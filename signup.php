@@ -10,6 +10,7 @@
         <title>Регистрация</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="icon" type="image/x-icon" href="img/logo.svg">
     </head>
     <body>
         <?php require 'navbar.php'; ?>

@@ -58,7 +58,7 @@ function getAudios() {
         $user_name = getUserById($audio["user_id"]);
         // тут нет проверки на существование юзера
         $split = explode("/", $audio["url"]);
-        $audio_name = $split[count($split)-1];
+        $audio_name = $split[count($split) - 1];
         $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил аудио <span class="font-weight-bold">' . $audio_name . '</span>:<br><audio controls><source src="' . $audio["url"] . '" type="audio/mpeg">Your browser does not support audio players</audio><br>';
     }
 
@@ -113,12 +113,12 @@ function getDesc() {
 
     $hwOn = "";
     $hwFrom = "";
-    
-    if ($desc){
+
+    if ($desc) {
         $hwFrom = $desc["hw"];
     }
-    
-    if ($desc_prev){
+
+    if ($desc_prev) {
         $hwOn = $desc_prev["hw"];
     }
 
@@ -134,7 +134,7 @@ function getAttachments() {
     global $week;
     global $day;
     global $number;
-    
+
     $result = "";
 
     $attachments = scheduleGetAttachments($semester, $week, $day, $number);
@@ -142,13 +142,13 @@ function getAttachments() {
     foreach ($attachments as $attachment) {
         $user_name = getUserById($attachment["user_id"]);
         $split = explode("/", $attachment["url"]);
-        
-        if(count($split) <= 0){
+
+        if (count($split) <= 0) {
             return "Ошибка названия файла";
         }
-        
-        $file_name = $split[count($split)-1];
-        
+
+        $file_name = $split[count($split) - 1];
+
         $result .= '<span class="font-weight-bold">' . $user_name . '</span> добавил файл: <a href="' . $attachment["url"] . '">' . $file_name . '</a><br>';
     }
 
