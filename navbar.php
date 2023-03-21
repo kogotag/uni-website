@@ -27,6 +27,9 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/media.php">Медиа</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/forum.php">Форум</a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <?php if (isLoggedIn()): ?>
