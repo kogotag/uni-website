@@ -613,3 +613,29 @@ function checkResetPasswordEmailRequestsDaily($ip) {
         return true;
     }
 }
+
+function forumGetForums() {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_forums` ORDER BY `id`;");
+    $exec = $stmt->execute(array());
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumGetTopics($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_topics.author=temp.user_id WHERE forum=? ORDER BY `id`;");
+    $exec = $stmt->execute(array($forum_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
