@@ -15,6 +15,9 @@
     </head>
     <body class="bg-light">
         <?php require 'navbar.php'; ?>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="forumBreadCrumb"></ol>
+        </nav>
         <div class="container-fluid">
             <div class="row mb-2 mt-4">
                 <div class="col-1"></div>
@@ -24,6 +27,7 @@
                         <h5 id="forumHeader"></h5>
                         <hr>
                         <div class="px-2 py-2" id="forumBody"></div>
+                        <div id="forumPagination"></div>
                     </div>
                 </div>
                 <div class="col-1"></div>

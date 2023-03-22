@@ -639,3 +639,55 @@ function forumGetTopics($forum_id) {
 
     return $stmt->fetchAll();
 }
+
+function forumGetPosts($topic_id, $page = 1) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_posts.author=temp.user_id WHERE topic=? AND page=? ORDER BY `number`;");
+    $exec = $stmt->execute(array($topic_id, $page));
+    
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetchAll();
+}
+
+function forumGetTopicInfo($topic_id) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` WHERE id=?;");
+    $exec = $stmt->execute(array($topic_id));
+    
+    if (!$exec) {
+        return [];
+    }
+    
+    return $stmt->fetch();
+}
+
+function forumGetForumInfo($forum_id) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT * FROM `forum_forums` WHERE id=?;");
+    $exec = $stmt->execute(array($forum_id));
+    
+    if (!$exec) {
+        return [];
+    }
+    
+    return $stmt->fetch();
+}
+
+function forumBreadCrumbTopicPage($topic_id) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("SELECT id, forum, name, forum_id, forum_name FROM `forum_topics` INNER JOIN (SELECT id AS forum_id, name AS forum_name FROM `forum_forums`) AS temp ON forum_topics.forum=temp.forum_id WHERE id=?;");
+    $exec = $stmt->execute(array($topic_id));
+    
+    if (!$exec) {
+        return [];
+    }
+    
+    return $stmt->fetch();
+}
