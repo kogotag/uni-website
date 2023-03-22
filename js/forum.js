@@ -254,13 +254,45 @@ function reloadPagination() {
         return;
     }
 
+    if (!p) {
+        p = 1;
+    } else {
+        p = parseInt(p);
+    }
+
     if (!fid && tid) {
         requestWithCsrf("/php/forumGetTopicInfo.php", "tid=" + tid, function (data) {
             try {
                 data = JSON.parse(data);
-                
+
                 let pagesCount = parseInt(data["pages_count"]);
-                forumPagination.innerHTML = "<nav><ul class=\"pagination\"></ul></nav>";
+                let leftBound = Math.max(p - 8, 1);
+                let rightBound = Math.min(p + 8, pagesCount);
+                let paginationBody = "<nav><ul class=\"pagination\">";
+
+                let prev = "";
+                if (p > 1) {
+                    prev = "<li class=\"page-item\"><a class=\"page-link\" href=\"/forum.php?tid=" + tid + "&p=" + (p - 1).toString() + "\">Назад</a></li>";
+                }
+
+                let next = "";
+                if (p < pagesCount) {
+                    next = "<li class=\"page-item\"><a class=\"page-link\" href=\"/forum.php?tid=" + tid + "&p=" + (p + 1).toString() + "\">Далее</a></li>";
+                }
+
+                paginationBody += prev;
+
+                for (let i = leftBound; i <= rightBound; i++) {
+                    let active = "";
+                    if (i === p) {
+                        active = " active";
+                    }
+
+                    paginationBody += "<li class=\"page-item" + active + "\"><a class=\"page-link\" href=\"/forum.php?tid=" + tid + "&p=" + i + "\">" + i + "</a></li>";
+                }
+                paginationBody += next + "</ul></nav>";
+                forumPagination.innerHTML = paginationBody;
+
             } catch (e) {
                 if (typeof data === "string") {
                     alert(data);
@@ -271,8 +303,6 @@ function reloadPagination() {
                 }
             }
         });
-        
-        forumPagination.innerHTML = "<nav><ul class=\"pagination\"></ul></nav>";
     } else {
         forumPagination.innerHTML = "";
     }
