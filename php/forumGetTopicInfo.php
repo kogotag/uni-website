@@ -25,7 +25,7 @@ if (!is_numeric($tid)) {
 
 $pages_info = forumGetTopicPostsNumber($tid);
 $info = forumGetTopicInfo($tid);
-$info["pages_count"] = $pages_info["pages_info"];
+$info["pages_count"] = $pages_info["pages_count"];
 $info["posts_count"] = $pages_info["posts_count"];
 
 echo json_encode($info);

@@ -15,12 +15,12 @@ if ($csrf_token == null || !validateToken($csrf_token)) {
 }
 
 if ($tid == null || strlen($tid) === 0 || strlen($tid) > 255) {
-    echo "Неправильный формат номера форума";
+    echo "Неправильный формат номера темы";
     exit();
 }
 
 if (!is_numeric($tid)) {
-    echo "Номер форума не является числом";
+    echo "Номер темы не является числом";
     exit();
 }
 
@@ -38,4 +38,14 @@ if (empty($p)) {
     $p = 1;
 }
 
-echo json_encode(forumGetPosts($tid, $p));
+$posts = forumGetPosts($tid, $p);
+
+foreach ($posts as &$post) {
+    if (array_key_exists("user_id", $_SESSION) && intval($post["author"]) === intval($_SESSION["user_id"])) {
+        $post["owned"] = true;
+    } else {
+        $post["owned"] = false;
+    }
+}
+
+echo json_encode($posts);

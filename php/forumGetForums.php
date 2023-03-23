@@ -11,4 +11,11 @@ if ($csrf_token == null || !validateToken($csrf_token)) {
     exit();
 }
 
-echo json_encode(forumGetForums());
+$forums = forumGetForums();
+
+foreach($forums as &$forum) {
+    $forum_topic_number = forumGetForumTopicsNumber($forum["id"]);
+    $forum["topics_count"] = $forum_topic_number;
+}
+
+echo json_encode($forums);

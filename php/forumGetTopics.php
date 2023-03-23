@@ -23,4 +23,12 @@ if (!is_numeric($fid)) {
     exit();
 }
 
-echo json_encode(forumGetTopics($fid));
+$topics = forumGetTopics($fid);
+
+foreach ($topics as &$topic) {
+    $topic_posts_info = forumGetTopicPostsNumber($topic["id"]);
+    $topic["posts_count"] = $topic_posts_info["posts_count"];
+    $topic["pages_count"] = $topic_posts_info["pages_count"];
+}
+
+echo json_encode($topics);

@@ -40,10 +40,14 @@ function reformatPostText(text) {
 }
 
 function start() {
+    specialCases();
+    if (stopLoading) {
+        return;
+    }
     reload();
     reloadBreadCrumb();
     reloadPagination();
-    reloadWritingArea();
+    reloadSendButton();
 }
 
 function forumBackground(counter) {
@@ -154,14 +158,19 @@ function reloadTopicPage() {
                 return;
             }
 
-            body += "";
             counter = 0;
             data.forEach(post => {
                 edited = "";
                 if (parseInt(post["edits_count"]) > 0) {
                     edited = "<small class=\"text-info\">Редактировалось " + post["edits_count"] + " раз. Последний раз " + reformatMySqlDate(post["last_edit_timestamp"]) + "</small>";
                 }
-                body += "<div class=\"row " + forumBackground(counter) + " py-2\"><div class=\"col-2\"><small class=\"text-info\">" + reformatMySqlDate(post["timestamp"]) + "</small><br><a href=\"\">" + post["user_name"] + "</a></div><div class=\"col-10\">" + reformatPostText(post["content"]) + "<br><br>" + edited + "</div></div>";
+
+                let editButton = "";
+                if (post["owned"]) {
+                    editButton = "<br><br><div class=\"d-flex justify-content-end\"><a href=\"/forumEditPost.php?tid=" + tid + "&pid=" + post["id"] + "&p=" + p + "\">Редактировать</a></div>";
+                }
+
+                body += "<div class=\"row " + forumBackground(counter) + " py-2\"><div class=\"col-2\"><small class=\"text-info\">" + reformatMySqlDate(post["timestamp"]) + "</small><br><a href=\"\">" + post["user_name"] + "</a></div><div class=\"col-10\">" + reformatPostText(post["content"]) + "<br>" + edited + editButton + "</div></div>";
                 counter++;
             });
             body += "";
@@ -203,7 +212,7 @@ function reloadBreadCrumb() {
         forumBreadCrumbDefault();
     } else if (fid && !tid) {
         forumBreadCrumb.innerHTML = "<li class=\"breadcrumb-item\"><a href=\"/\">Главная</a></li>\n\
-<li class=\"breadcrumb-item\"><a href=\"/forum.php\">Форум</a></li>"
+<li class=\"breadcrumb-item\"><a href=\"/forum.php\">Форум</a></li>";
         requestWithCsrf("/php/forumGetForumInfo.php", "fid=" + fid, function (data) {
             try {
                 data = JSON.parse(data);
@@ -313,54 +322,51 @@ function reloadPagination() {
     }
 }
 
-function reloadWritingArea() {
-    if (!forumWritingArea || !forumWritingAreaDown) {
+function reloadSendButton() {
+    if (!forumPlaceForSendButton || !tid || fid) {
         return;
     }
 
-    if (fid || !tid) {
-        forumWritingArea.innerHTML = "";
-        forumWritingAreaDown.innerHTML = "";
-        return;
-    }
-
-    let forumWritingAreaText = "<textarea class=\"form-control\" id=\"forumTextArea\" rows=10 placeholder=\"Введите сообщение...\"></textarea>";
-    let forumWritingAreaDownText = "<div class=\"btn btn-primary\" id=\"forumButtonSend\">Отправить</div>";
-    forumWritingArea.innerHTML = forumWritingAreaText;
-    forumWritingAreaDown.innerHTML = forumWritingAreaDownText;
-    forumTextArea = document.getElementById("forumTextArea");
-    forumButtonSend = document.getElementById("forumButtonSend");
-    forumButtonSend.addEventListener("click", onForumButtonSend);
+    forumPlaceForSendButton.innerHTML = "<a class=\"btn btn-primary\" href=\"/forumSendPost.php?tid=" + tid + "\">Написать в эту тему</a>";
 }
 
-function onForumButtonSend() {
-    if (!forumTextArea) {
+function specialCases() {
+    if (!tid) {
         return;
     }
-    
-    requestWithCsrf("/php/forumAddPost.php", "tid=" + tid + "&content=" + forumTextArea.value, function(data) {
-        if (data === "success") {
-            alert("Сообщение отправлено успешно");
-            reloadTopicPage();
-            reloadPagination();
-        } else if (typeof data === "string") {
-            alert(data);
-        } else {
-            alert("Неизвестная ошибка. Обратитесь к администратору");
-        }
-    });
+
+    if (p === "last") {
+        stopLoading = true;
+
+        requestWithCsrf("php/forumGetTopicInfo.php", "tid=" + tid, function (data) {
+            try {
+                data = JSON.parse(data);
+
+                location.href = "/forum.php?tid=" + tid + "&p=" + data["pages_count"];
+            } catch (e) {
+                if (typeof data === "string") {
+                    alert(data);
+                    return;
+                } else {
+                    alert("Ошибка. Сервер вернул неожиданный ответ. Обратитесь к администратору");
+                    return;
+                }
+            }
+        });
+        
+        return;
+    }
 }
 
 const forumBody = document.getElementById("forumBody");
 const forumHeader = document.getElementById("forumHeader");
 const forumBreadCrumb = document.getElementById("forumBreadCrumb");
 const forumPagination = document.getElementById("forumPagination");
-const forumWritingArea = document.getElementById("forumWritingArea");
-const forumWritingAreaDown = document.getElementById("forumWritingAreaDown");
-let forumTextArea = null;
-let forumButtonSend = null;
+const forumPlaceForSendButton = document.getElementById("forumPlaceForSendButton");
 const fid = findGetParameter("fid");
 const tid = findGetParameter("tid");
 let p = findGetParameter("p");
+let rp = findGetParameter("rp");
+let stopLoading = false;
 
 start();

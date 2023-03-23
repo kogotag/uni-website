@@ -688,6 +688,19 @@ function forumGetForumInfo($forum_id) {
     return $stmt->fetch();
 }
 
+function forumGetPostInfo($post_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` WHERE id=?;");
+    $exec = $stmt->execute(array($post_id));
+
+    if (!$exec) {
+        return [];
+    }
+
+    return $stmt->fetch();
+}
+
 function forumBreadCrumbTopicPage($topic_id) {
     global $dbh;
 
@@ -723,10 +736,10 @@ function forumGetTopicPostsNumber($topic_id) {
     if (!$exec) {
         return 0;
     }
-    
+
     $posts_count = count($stmt->fetchAll());
     $pages_count = ceil($posts_count / FORUM_MESSAGES_PER_PAGE);
-    
+
     $result = [];
     $result["posts_count"] = $posts_count;
     $result["pages_count"] = $pages_count;
@@ -734,11 +747,50 @@ function forumGetTopicPostsNumber($topic_id) {
     return $result;
 }
 
+function forumGetPostPageNumber($post_id) {
+    global $dbh;
+
+    $stmt_topic = $dbh->prepare("SELECT id, topic FROM `forum_posts` WHERE id=?;");
+    $exec_topic = $stmt_topic->execute(array($post_id));
+
+    if (!$exec_topic) {
+        return 1;
+    }
+
+    $result_topic = $stmt_topic->fetch();
+
+    if (!$result_topic) {
+        return 1;
+    }
+
+    $topic_id = $result_topic["topic"];
+
+    $stmt = $dbh->prepare("SELECT id, topic FROM `forum_posts` WHERE id < ? AND topic=?;");
+    $stmt->bindValue(1, $post_id, PDO::PARAM_INT);
+    $stmt->bindValue(2, $topic_id, PDO::PARAM_INT);
+    $exec = $stmt->execute();
+
+    if (!$exec) {
+        return 1;
+    }
+
+    return ceil((count($stmt->fetchAll()) + 1) / FORUM_MESSAGES_PER_PAGE);
+}
+
 function forumAddPost($text, $topic_id, $user_id) {
     global $dbh;
 
     $stmt = $dbh->prepare("INSERT INTO `forum_posts` (`content`, `topic`, `author`) VALUES(?, ?, ?);");
     $exec = $stmt->execute(array($text, $topic_id, $user_id));
-    
+
+    return $exec;
+}
+
+function forumEditPost($text, $post_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `forum_posts` SET content=? WHERE id=?;");
+    $exec = $stmt->execute(array($text, $post_id));
+
     return $exec;
 }

@@ -21,21 +21,15 @@
         <div class="container-fluid">
             <div class="row mb-2 mt-4">
                 <div class="col-1"></div>
-                <?php require 'blocks/forumLeftPanel.php'; ?>
-                <div class="col-9 pl-1 pr-4">
-                    <div class="bg-white pl-2 pr-1 py-1">
-                        <h5 id="forumHeader"></h5>
-                        <hr>
-                        <div class="px-2 py-2" id="forumBody"></div>
-                    </div>
-                    <div id="forumPagination" class="py-2"></div>
-                    <div id="forumPlaceForSendButton"></div>
+                <div class="col-10 pl-1 pr-4">
+                    <textarea class="form-control mb-2" id="forumTextArea" rows="10" placeholder="Введите сообщение..."></textarea>
+                    <div class="btn btn-primary" id="forumButtonSend">Отправить</div>
                 </div>
                 <div class="col-1"></div>
             </div>
         </div>
         <?php require 'footer.php'; ?>
         <?php require 'php/importImportantJsScripts.php'; ?>
-        <script src="js/forum.js"></script>
+        <script src="/js/forumEditPost.js"></script>
     </body>
 </html>
