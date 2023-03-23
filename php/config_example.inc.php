@@ -23,6 +23,8 @@ define("PASSWORD_RESET_EMAIL_REQUEST_MAX_PER_DAY", 3);
 define("CSRF_TOKEN_SECRET", "fghfghfh2");
 
 define("MAX_AUDIO_FILE_SIZE", 300 * 1024 * 1024);
+define("FORUM_MAX_POST_SIZE", 20000);
+define("FORUM_MESSAGES_PER_PAGE", 20);
 
 define("WEB_SERVER_FOLDER", "/var/www/html");
 define("FILES_FOLDER_REFERENCE", "files");

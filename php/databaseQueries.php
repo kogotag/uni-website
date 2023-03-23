@@ -642,10 +642,19 @@ function forumGetTopics($forum_id) {
 
 function forumGetPosts($topic_id, $page = 1) {
     global $dbh;
-    
-    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_posts.author=temp.user_id WHERE topic=? AND page=? ORDER BY `number`;");
-    $exec = $stmt->execute(array($topic_id, $page));
-    
+
+    try {
+        $page = intval($page);
+    } catch (Exception $ex) {
+        return [];
+    }
+
+    $stmt = $dbh->prepare("SELECT * FROM `forum_posts` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_posts.author=temp.user_id WHERE topic=? ORDER BY `id` LIMIT ? OFFSET ?;");
+    $stmt->bindValue(1, $topic_id, PDO::PARAM_INT);
+    $stmt->bindValue(2, FORUM_MESSAGES_PER_PAGE, PDO::PARAM_INT);
+    $stmt->bindValue(3, ($page - 1) * FORUM_MESSAGES_PER_PAGE, PDO::PARAM_INT);
+    $exec = $stmt->execute();
+
     if (!$exec) {
         return [];
     }
@@ -655,39 +664,74 @@ function forumGetPosts($topic_id, $page = 1) {
 
 function forumGetTopicInfo($topic_id) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("SELECT * FROM `forum_topics` WHERE id=?;");
     $exec = $stmt->execute(array($topic_id));
-    
+
     if (!$exec) {
         return [];
     }
-    
+
     return $stmt->fetch();
 }
 
 function forumGetForumInfo($forum_id) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("SELECT * FROM `forum_forums` WHERE id=?;");
     $exec = $stmt->execute(array($forum_id));
-    
+
     if (!$exec) {
         return [];
     }
-    
+
     return $stmt->fetch();
 }
 
 function forumBreadCrumbTopicPage($topic_id) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("SELECT id, forum, name, forum_id, forum_name FROM `forum_topics` INNER JOIN (SELECT id AS forum_id, name AS forum_name FROM `forum_forums`) AS temp ON forum_topics.forum=temp.forum_id WHERE id=?;");
     $exec = $stmt->execute(array($topic_id));
-    
+
     if (!$exec) {
         return [];
     }
-    
+
     return $stmt->fetch();
+}
+
+function forumGetForumTopicsNumber($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT forum FROM `forum_topics` WHERE forum=?;");
+    $exec = $stmt->execute(array($forum_id));
+
+    if (!$exec) {
+        return 0;
+    }
+
+    return count($stmt->fetchAll());
+}
+
+function forumGetTopicPagesNumber($topic_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("SELECT topic FROM `forum_posts` WHERE topic=?;");
+    $exec = $stmt->execute(array($topic_id));
+
+    if (!$exec) {
+        return 0;
+    }
+
+    return ceil(count($stmt->fetchAll()) / FORUM_MESSAGES_PER_PAGE);
+}
+
+function forumAddPost($text, $topic_id, $user_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("INSERT INTO `forum_posts` (`content`, `topic`, `author`) VALUES(?, ?, ?);");
+    $exec = $stmt->execute(array($text, $topic_id, $user_id));
+    
+    return $exec;
 }

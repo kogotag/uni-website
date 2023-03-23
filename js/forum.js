@@ -35,10 +35,15 @@ function reformatMySqlDate(date) {
     return date.toLocaleString("ru-RU");
 }
 
+function reformatPostText(text) {
+    return text;
+}
+
 function start() {
     reload();
     reloadBreadCrumb();
     reloadPagination();
+    reloadWritingArea();
 }
 
 function forumBackground(counter) {
@@ -156,7 +161,7 @@ function reloadTopicPage() {
                 if (parseInt(post["edits_count"]) > 0) {
                     edited = "<small class=\"text-info\">Редактировалось " + post["edits_count"] + " раз. Последний раз " + reformatMySqlDate(post["last_edit_timestamp"]) + "</small>";
                 }
-                body += "<div class=\"row " + forumBackground(counter) + " py-2\"><div class=\"col-2\"><small class=\"text-info\">" + reformatMySqlDate(post["timestamp"]) + "</small><br><a href=\"\">" + post["user_name"] + "</a></div><div class=\"col-10\">" + post["content"] + "<br><br>" + edited + "</div></div>";
+                body += "<div class=\"row " + forumBackground(counter) + " py-2\"><div class=\"col-2\"><small class=\"text-info\">" + reformatMySqlDate(post["timestamp"]) + "</small><br><a href=\"\">" + post["user_name"] + "</a></div><div class=\"col-10\">" + reformatPostText(post["content"]) + "<br><br>" + edited + "</div></div>";
                 counter++;
             });
             body += "";
@@ -308,10 +313,52 @@ function reloadPagination() {
     }
 }
 
+function reloadWritingArea() {
+    if (!forumWritingArea || !forumWritingAreaDown) {
+        return;
+    }
+
+    if (fid || !tid) {
+        forumWritingArea.innerHTML = "";
+        forumWritingAreaDown.innerHTML = "";
+        return;
+    }
+
+    let forumWritingAreaText = "<textarea class=\"form-control\" id=\"forumTextArea\" rows=10 placeholder=\"Введите сообщение...\"></textarea>";
+    let forumWritingAreaDownText = "<div class=\"btn btn-primary\" id=\"forumButtonSend\">Отправить</div>";
+    forumWritingArea.innerHTML = forumWritingAreaText;
+    forumWritingAreaDown.innerHTML = forumWritingAreaDownText;
+    forumTextArea = document.getElementById("forumTextArea");
+    forumButtonSend = document.getElementById("forumButtonSend");
+    forumButtonSend.addEventListener("click", onForumButtonSend);
+}
+
+function onForumButtonSend() {
+    if (!forumTextArea) {
+        return;
+    }
+    
+    requestWithCsrf("/php/forumAddPost.php", "tid=" + tid + "&content=" + forumTextArea.value, function(data) {
+        if (data === "success") {
+            alert("Сообщение отправлено успешно");
+            reloadTopicPage();
+            reloadPagination();
+        } else if (typeof data === "string") {
+            alert(data);
+        } else {
+            alert("Неизвестная ошибка. Обратитесь к администратору");
+        }
+    });
+}
+
 const forumBody = document.getElementById("forumBody");
 const forumHeader = document.getElementById("forumHeader");
 const forumBreadCrumb = document.getElementById("forumBreadCrumb");
 const forumPagination = document.getElementById("forumPagination");
+const forumWritingArea = document.getElementById("forumWritingArea");
+const forumWritingAreaDown = document.getElementById("forumWritingAreaDown");
+let forumTextArea = null;
+let forumButtonSend = null;
 const fid = findGetParameter("fid");
 const tid = findGetParameter("tid");
 let p = findGetParameter("p");

@@ -27,8 +27,10 @@
                         <h5 id="forumHeader"></h5>
                         <hr>
                         <div class="px-2 py-2" id="forumBody"></div>
-                        <div id="forumPagination"></div>
                     </div>
+                    <div id="forumPagination" class="d-flex justify-content-center py-2 px-2"></div>
+                    <div id="forumWritingArea" class="d-flex justify-content-center py-2 px-2"></div>
+                    <div id="forumWritingAreaDown" class="py-2 px-2"></div>
                 </div>
                 <div class="col-1"></div>
             </div>

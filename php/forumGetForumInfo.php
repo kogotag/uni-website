@@ -9,7 +9,6 @@ $fid = htmlspecialchars(trim(filter_input(INPUT_POST, 'fid')));
 
 if ($csrf_token == null || !validateToken($csrf_token)) {
     echo "Ошибка безопасности: csrf-token не прошёл валидацию";
-    $errors = true;
     exit();
 }
 
@@ -23,4 +22,7 @@ if (!is_numeric($fid)) {
     exit();
 }
 
-echo json_encode(forumGetForumInfo($fid));
+$info = forumGetForumInfo($fid);
+$info["topics_count"] = forumGetForumTopicsNumber($fid);
+
+echo json_encode($info);

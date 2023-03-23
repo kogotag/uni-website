@@ -5,11 +5,26 @@ require_once 'auth.php';
 require_once 'databaseQueries.php';
 
 $csrf_token = htmlspecialchars(trim(filter_input(INPUT_POST, 'csrf-token')));
+$content = htmlspecialchars(trim(filter_input(INPUT_POST, 'content')));
 $tid = htmlspecialchars(trim(filter_input(INPUT_POST, 'tid')));
 
 if ($csrf_token == null || !validateToken($csrf_token)) {
     echo "Ошибка безопасности: csrf-token не прошёл валидацию";
-    $errors = true;
+    exit();
+}
+
+if (!isLoggedIn()) {
+    echo "Для отправки сообщений войдите в учётную запись";
+    exit();
+}
+
+if (intval($_SESSION["user_verified"]) < 1) {
+    echo "Для отправки сообщений необходимо подтвердить адрес электронной почты";
+    exit();
+}
+
+if ($content == null || empty($content) || strlen($content) > FORUM_MAX_POST_SIZE) {
+    echo 'Пустое или слишком большое сообщение';
     exit();
 }
 
@@ -23,7 +38,6 @@ if (!is_numeric($tid)) {
     exit();
 }
 
-$info = forumGetTopicInfo($tid);
-$info["pages_count"] = forumGetTopicPagesNumber($tid);
+forumAddPost($content, $tid, $_SESSION["user_id"]);
 
-echo json_encode($info);
+echo "success";
