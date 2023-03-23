@@ -120,7 +120,7 @@ function reloadTopics() {
 
             body += "<div class=\"table-responsive\"><table class=\"table table-bordered\"><thead><tr><th></th><th>Автор</th><th>Сообщений</th><th>Обновление</th></tr></thead><tbody>";
             data.forEach(topic => {
-                body += "<tr><td><a href=\"/forum.php?tid=" + topic["id"] + "\">" + topic["name"] + "</a></td><td>" + topic["user_name"] + "</td><td>" + topic["msg_count"] + "</td><td>" + reformatMySqlDate(topic["last_update"]) + "</td></tr>";
+                body += "<tr><td><a href=\"/forum.php?tid=" + topic["id"] + "\">" + topic["name"] + "</a></td><td>" + topic["user_name"] + "</td><td>" + topic["posts_count"] + "</td><td>" + reformatMySqlDate(topic["last_update"]) + "</td></tr>";
             });
             body += "</tbody></table></div>";
             forumBody.innerHTML = body;

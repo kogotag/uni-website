@@ -714,7 +714,7 @@ function forumGetForumTopicsNumber($forum_id) {
     return count($stmt->fetchAll());
 }
 
-function forumGetTopicPagesNumber($topic_id) {
+function forumGetTopicPostsNumber($topic_id) {
     global $dbh;
 
     $stmt = $dbh->prepare("SELECT topic FROM `forum_posts` WHERE topic=?;");
@@ -723,8 +723,15 @@ function forumGetTopicPagesNumber($topic_id) {
     if (!$exec) {
         return 0;
     }
+    
+    $posts_count = count($stmt->fetchAll());
+    $pages_count = ceil($posts_count / FORUM_MESSAGES_PER_PAGE);
+    
+    $result = [];
+    $result["posts_count"] = $posts_count;
+    $result["pages_count"] = $pages_count;
 
-    return ceil(count($stmt->fetchAll()) / FORUM_MESSAGES_PER_PAGE);
+    return $result;
 }
 
 function forumAddPost($text, $topic_id, $user_id) {
