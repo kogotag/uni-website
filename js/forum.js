@@ -22,18 +22,19 @@ class ImageTag {
     params = [];
     width = 100;
     innerText = "";
+    center = true;
     constructor(tagString, number, start, end) {
         this.number = number;
         this.tag = tagString;
         this.start = start;
         this.end = end;
-        
+
         let innerTextPattern = /\[img.*?\](.*?)\[\/img\]/ms;
         let innerTextMatch = tagString.match(innerTextPattern);
         if (innerTextMatch) {
             this.innerText = innerTextMatch[1];
         }
-        
+
         let paramsPattern = /\[img\s+(?<params>.*?)\]/gms;
         let paramsMatch = tagString.match(paramsPattern);
         let paramsString = undefined;
@@ -71,6 +72,11 @@ class ImageTag {
                 console.log(e);
             }
         }
+        
+        let centerParam = this.params.find(param => param.name === "center");
+        if (centerParam && centerParam.value === "false") {
+            this.center = false;
+        }
     }
 
     toString() {
@@ -83,6 +89,86 @@ class ImageTag {
                 + "\nend: "
                 + this.end
                 + "\nparams: " + this.params.toString();
+    }
+}
+
+class HeaderTag {
+    start;
+    end;
+    innerText = "";
+    tagString;
+    params = [];
+    center = true;
+    constructor(tagString, innerText, paramsString, start, end) {
+        this.tagString = tagString;
+        this.start = start;
+        this.end = end;
+        this.innerText = innerText;
+
+        if (paramsString.trim()) {
+            let separateParameterPattern = /(?<key>\w+)=&quot;(?<val>.*?)\&quot;/gms;
+            let separateParameterMatches = paramsString.matchAll(separateParameterPattern);
+            if (separateParameterMatches) {
+                for (const separateParameterMatch of separateParameterMatches) {
+                    this.params.push(new TagParameter(separateParameterMatch.groups.key, separateParameterMatch.groups.val));
+                }
+            }
+        }
+
+        let centerParam = this.params.find(elem => elem.name === "center");
+        if (centerParam && centerParam.value === "false") {
+            this.center = false;
+        }
+    }
+
+    toString() {
+        return "tagString: "
+                + this.tagString
+                + "\ninnerText: "
+                + this.innerText
+                + "\nstart: "
+                + this.start.toString()
+                + "\nend: "
+                + this.end.toString()
+                + "\nparams: "
+                + this.params.toString();
+    }
+}
+
+class ColorTag {
+    start;
+    end;
+    innerText = "";
+    tagString;
+    params = [];
+    colorPalet = {
+        "yellow": "#ff0",
+        "red": "#f00",
+        "blue": "#00f",
+        "green": "#0f0",
+        "light-blue": "#06f"
+    };
+    color;
+    constructor(tagString, innerText, paramsString, start, end) {
+        this.tagString = tagString;
+        this.start = start;
+        this.end = end;
+        this.innerText = innerText;
+
+        if (paramsString.trim()) {
+            let separateParameterPattern = /(?<key>\w+)=&quot;(?<val>.*?)\&quot;/gms;
+            let separateParameterMatches = paramsString.matchAll(separateParameterPattern);
+            if (separateParameterMatches) {
+                for (const separateParameterMatch of separateParameterMatches) {
+                    this.params.push(new TagParameter(separateParameterMatch.groups.key, separateParameterMatch.groups.val));
+                }
+            }
+        }
+
+        let colorParam = this.params.find(param => param.name === "color");
+        if (colorParam && colorParam.value in this.colorPalet) {
+            this.color = this.colorPalet[colorParam.value];
+        }
     }
 }
 
@@ -142,8 +228,15 @@ function reformatMySqlDate(date) {
 }
 
 function reformatPostText(text, pid) {
+    text = reformatImageTags(text, pid);
+    text = reformatHeaderTags(text);
+    text = reformatColorTags(text);
     text = text.replaceAll("\n", "<br>");
 
+    return text;
+}
+
+function reformatImageTags(text, pid) {
     let imgRegExp = /\[img.*?\].*?\[\/img\]/gms;
     let imgMatches = text.matchAll(imgRegExp);
     let imgTags = [];
@@ -181,9 +274,15 @@ function reformatPostText(text, pid) {
                     if (image) {
                         let desc = "";
                         if (imgTags[i].innerText) {
-                            desc += "<br><small class=\"text-info\">" + imgTags[i].innerText + "</small>";
+                            desc += "<small class=\"text-info\">" + imgTags[i].innerText + "</small>";
                         }
-                        newString += "<br><div><img class=\"img-fluid\" src=\"" + image["file_dir"] + image["file_name"] + "\" width=\"" + imgTags[i].width.toString() + "%\"></img>" + desc + "</div>";
+                        
+                        let center = "";
+                        if (imgTags[i].center) {
+                            center = " class=\"d-flex flex-row justify-content-center\"";
+                        }
+                        
+                        newString += "<br><div" + center + "><div class=\"d-flex flex-column align-items-center\" style=\"width: " + imgTags[i].width.toString() + "%\"><img class=\"img-fluid\" src=\"" + image["file_dir"] + image["file_name"] + "\"></img>" + desc + "</div></div>";
                     }
                     if (i < imgTags.length - 1) {
                         newString += text.substring(imgTags[i].end, imgTags[i + 1].start);
@@ -205,6 +304,75 @@ function reformatPostText(text, pid) {
     });
 
     return text;
+}
+
+function reformatHeaderTags(text) {
+    let headerTagsPattern = /\[h(?<params>.*?)\](?<text>.*?)\[\/h\]/gms;
+    let headerTagsMatches = text.matchAll(headerTagsPattern);
+    if (!headerTagsMatches) {
+        return text;
+    }
+
+    let headerTags = [];
+
+    for (const headerTagMatch of headerTagsMatches) {
+        headerTags.push(new HeaderTag(headerTagMatch[0], headerTagMatch.groups.text, headerTagMatch.groups.params, headerTagMatch.index, headerTagMatch.index + headerTagMatch[0].length));
+    }
+
+    if (headerTags.length < 1) {
+        return text;
+    }
+
+    let newText = text.substring(0, headerTags[0].start);
+    for (let i = 0; i < headerTags.length; i++) {
+        let center = "";
+        if (headerTags[i].center) {
+            center = " text-center";
+        }
+        newText += "<h1 class=\"text-break display-4" + center + "\">" + headerTags[i].innerText + "</h1>";
+        if (i < headerTags.length - 1) {
+            newText += text.substring(headerTags[i].end, headerTags[i + 1].start);
+        } else {
+            newText += text.substring(headerTags[i].end, text.length);
+        }
+    }
+
+    return newText;
+}
+
+function reformatColorTags(text) {
+    let colorTagsPattern = /\[color(?<params>.*?)\](?<text>.*?)\[\/color\]/gms;
+    let colorTagsMatches = text.matchAll(colorTagsPattern);
+    if (!colorTagsMatches) {
+        return text;
+    }
+
+    let colorTags = [];
+
+    for (const colorTagsMatch of colorTagsMatches) {
+        colorTags.push(new ColorTag(colorTagsMatch[0], colorTagsMatch.groups.text, colorTagsMatch.groups.params, colorTagsMatch.index, colorTagsMatch.index + colorTagsMatch[0].length));
+    }
+
+    if (colorTags.length < 1) {
+        return text;
+    }
+
+    let newText = text.substring(0, colorTags[0].start);
+    for (let i = 0; i < colorTags.length; i++) {
+        if (colorTags[i].color) {
+            newText += "<span style=\"color: " + colorTags[i].color + "\">" + colorTags[i].innerText + "</span>";
+        } else {
+            newText += colorTags[i].innerText;
+        }
+
+        if (i < colorTags.length - 1) {
+            newText += text.substring(colorTags[i].end, colorTags[i + 1].start);
+        } else {
+            newText += text.substring(colorTags[i].end, text.length);
+        }
+    }
+
+    return newText;
 }
 
 function start() {
@@ -306,7 +474,7 @@ function reloadTopics() {
             }
         }
     });
-    
+
     reloadCreateTopicButton();
 }
 
