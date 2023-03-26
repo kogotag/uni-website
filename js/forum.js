@@ -21,11 +21,19 @@ class ImageTag {
     end;
     params = [];
     width = 100;
+    innerText = "";
     constructor(tagString, number, start, end) {
         this.number = number;
         this.tag = tagString;
         this.start = start;
         this.end = end;
+        
+        let innerTextPattern = /\[img.*?\](.*?)\[\/img\]/ms;
+        let innerTextMatch = tagString.match(innerTextPattern);
+        if (innerTextMatch) {
+            this.innerText = innerTextMatch[1];
+        }
+        
         let paramsPattern = /\[img\s+(?<params>.*?)\]/gms;
         let paramsMatch = tagString.match(paramsPattern);
         let paramsString = undefined;
@@ -171,7 +179,11 @@ function reformatPostText(text, pid) {
                 for (let i = 0; i < imgTags.length; i++) {
                     let image = data.find(elem => parseInt(elem["number"]) === imgTags[i].number);
                     if (image) {
-                        newString += "<br><div><img class=\"img-fluid\" src=\"" + image["file_dir"] + image["file_name"] + "\" width=\"" + imgTags[i].width.toString() + "%\"></img></div>";
+                        let desc = "";
+                        if (imgTags[i].innerText) {
+                            desc += "<br><small class=\"text-info\">" + imgTags[i].innerText + "</small>";
+                        }
+                        newString += "<br><div><img class=\"img-fluid\" src=\"" + image["file_dir"] + image["file_name"] + "\" width=\"" + imgTags[i].width.toString() + "%\"></img>" + desc + "</div>";
                     }
                     if (i < imgTags.length - 1) {
                         newString += text.substring(imgTags[i].end, imgTags[i + 1].start);
