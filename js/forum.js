@@ -172,6 +172,36 @@ class ColorTag {
     }
 }
 
+class LinkTag {
+    start;
+    end;
+    innerText = "";
+    tagString;
+    params = [];
+    url = "";
+    constructor(tagString, innerText, paramsString, start, end) {
+        this.tagString = tagString;
+        this.start = start;
+        this.end = end;
+        this.innerText = innerText;
+
+        if (paramsString.trim()) {
+            let separateParameterPattern = /(?<key>\w+)=&quot;(?<val>.*?)\&quot;/gms;
+            let separateParameterMatches = paramsString.matchAll(separateParameterPattern);
+            if (separateParameterMatches) {
+                for (const separateParameterMatch of separateParameterMatches) {
+                    this.params.push(new TagParameter(separateParameterMatch.groups.key, separateParameterMatch.groups.val));
+                }
+            }
+        }
+
+        let urlParam = this.params.find(param => param.name === "url");
+        if (urlParam) {
+            this.url = urlParam.value;
+        }
+    }
+}
+
 function requestWithCsrf(url, data, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
@@ -231,6 +261,7 @@ function reformatPostText(text, pid) {
     text = reformatImageTags(text, pid);
     text = reformatHeaderTags(text);
     text = reformatColorTags(text);
+    text = reformatLinkTags(text);
     text = text.replaceAll("\n", "<br>");
 
     return text;
@@ -372,6 +403,41 @@ function reformatColorTags(text) {
         }
     }
 
+    return newText;
+}
+
+function reformatLinkTags(text) {
+    let tagsPattern = /\[url(?<params>.*?)\](?<text>.*?)\[\/url\]/gms;
+    let tagsMatches = text.matchAll(tagsPattern);
+    if (!tagsMatches) {
+        return text;
+    }
+    
+    let tags = [];
+    
+    for (const tagsMatch of tagsMatches) {
+        tags.push(new LinkTag(tagsMatch[0], tagsMatch.groups.text, tagsMatch.groups.params, tagsMatch.index, tagsMatch.index + tagsMatch[0].length));
+    }
+    
+    if (tags.length < 1) {
+        return text;
+    }
+    
+    let newText = text.substring(0, tags[0].start);
+    for (let i = 0; i < tags.length; i++) {
+        if (tags[i].url) {
+            newText += "<a href=\"" + tags[i].url + "\">" + tags[i].innerText + "</a>";
+        } else {
+            newText += tags[i].innerText;
+        }
+        
+        if (i < tags.length - 1) {
+            newText += text.substring(tags[i].end, tags[i + 1].start);
+        } else {
+            newText += text.substring(tags[i].end, text.length);
+        }
+    }
+    
     return newText;
 }
 
