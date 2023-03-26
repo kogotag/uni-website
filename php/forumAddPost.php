@@ -39,6 +39,13 @@ if (!is_numeric($tid)) {
     exit();
 }
 
+$topic_check = forumGetTopicInfo($tid);
+
+if (!$topic_check) {
+    echo "Указанная тема не существует";
+    exit();
+}
+
 $images = [];
 
 if (!empty($images_json)) {
@@ -79,7 +86,7 @@ if (!$pid) {
 forumRenewTopicUpdateTime($tid);
 
 for ($i = 0; $i < count($images); $i++) {
-    forumPostAddImage($_SESSION["user_id"], $pid, $i + 1, $images[$i]);
+    forumPostAddImage($_SESSION["user_id"], $pid, $i + 1, htmlspecialchars($images[$i]));
 }
 
 echo "success";

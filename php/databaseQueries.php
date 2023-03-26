@@ -917,3 +917,17 @@ function forumRenewTopicUpdateTime($topic_id) {
 
     return $exec;
 }
+
+function forumCreateTopic($forum_id, $topic_name, $user_id) {
+    global $dbh;
+    
+    $stmt = $dbh->prepare("INSERT INTO `forum_topics` (`forum`, `name`, `author`) VALUES(?, ?, ?);");
+    $exec = $stmt->execute(array($forum_id, $topic_name, $user_id));
+    $id = $dbh->lastInsertId();
+    
+    if (!$exec) {
+        return false;
+    }
+    
+    return $id;
+}

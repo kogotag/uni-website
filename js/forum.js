@@ -294,6 +294,8 @@ function reloadTopics() {
             }
         }
     });
+    
+    reloadCreateTopicButton();
 }
 
 function reloadTopicPage() {
@@ -490,6 +492,14 @@ function reloadSendButton() {
     }
 
     forumPlaceForSendButton.innerHTML = "<a class=\"btn btn-primary\" href=\"/forumSendPost.php?tid=" + tid + "\">Написать в эту тему</a>";
+}
+
+function reloadCreateTopicButton() {
+    if (!forumPlaceForSendButton || tid || !fid) {
+        return;
+    }
+
+    forumPlaceForSendButton.innerHTML = "<a class=\"btn btn-primary\" href=\"/forumCreateTopic.php?fid=" + fid + "\">Создать новую тему</a>";
 }
 
 function specialCases() {
