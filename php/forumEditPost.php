@@ -83,6 +83,8 @@ if (!$result) {
     exit();
 }
 
+forumRenewTopicUpdateTime($tid);
+
 $delete = forumPostDeleteImages($pid);
 
 if (!$delete) {

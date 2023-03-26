@@ -76,6 +76,8 @@ if (!$pid) {
     exit();
 }
 
+forumRenewTopicUpdateTime($tid);
+
 for ($i = 0; $i < count($images); $i++) {
     forumPostAddImage($_SESSION["user_id"], $pid, $i + 1, $images[$i]);
 }

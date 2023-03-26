@@ -887,9 +887,33 @@ function forumPostAddImage($user_id, $post_id, $number, $attachment_id) {
 
 function forumPostDeleteImages($post_id) {
     global $dbh;
-    
+
     $stmt = $dbh->prepare("DELETE FROM `forum_posts_images` WHERE post=?;");
     $exec = $stmt->execute(array($post_id));
-    
+
+    return $exec;
+}
+
+function forumRenewForumUpdateTime($forum_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `forum_forums` SET last_update=now() WHERE id=?;");
+    $exec = $stmt->execute(array($forum_id));
+
+    return $exec;
+}
+
+function forumRenewTopicUpdateTime($topic_id) {
+    global $dbh;
+
+    $stmt = $dbh->prepare("UPDATE `forum_topics` SET last_update=now() WHERE id=?;");
+    $exec = $stmt->execute(array($topic_id));
+
+    $topic_info = forumGetTopicInfo($topic_id);
+    if ($topic_info) {
+        $forum_id = $topic_info["forum"];
+        forumRenewForumUpdateTime($forum_id);
+    }
+
     return $exec;
 }
