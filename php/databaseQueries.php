@@ -630,7 +630,7 @@ function forumGetForums() {
 function forumGetTopics($forum_id) {
     global $dbh;
 
-    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_topics.author=temp.user_id WHERE forum=? ORDER BY `id`;");
+    $stmt = $dbh->prepare("SELECT * FROM `forum_topics` INNER JOIN (SELECT name AS user_name, id AS user_id FROM `users`) AS temp ON forum_topics.author=temp.user_id WHERE forum=? ORDER BY `last_update` DESC;");
     $exec = $stmt->execute(array($forum_id));
 
     if (!$exec) {
