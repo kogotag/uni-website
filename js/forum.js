@@ -144,6 +144,7 @@ class ColorTag {
     colorPalet = {
         "yellow": "#ff0",
         "red": "#f00",
+        "orange": "#f0be50",
         "blue": "#00f",
         "green": "#0f0",
         "light-blue": "#06f"
