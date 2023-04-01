@@ -75,7 +75,7 @@ if (intval($file["size"]) > FORUM_MAX_IMAGE_SIZE) {
     exit();
 }
 
-$allowedFileExtensions = array("jpg", "jpeg", "png");
+$allowedFileExtensions = array("jpg", "jpeg", "png", "gif");
 
 $explode = explodeFileName($fileFullName);
 $fileName = $explode[0];
